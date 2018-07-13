@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"github.com/hihebark/gore/core"
+	"os"
 )
 
 //https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78
@@ -20,12 +20,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 	}
 	core.MakeItGray(file)
-//	pixels, err := core.GetPixels(file)
-//	//core.GetRGBA(file)
+	//	pixels, err := core.GetPixels(file)
+	//	//core.GetRGBA(file)
 
-//	if err != nil {
-//		fmt.Println("Error: Image could not be decoded")
-//		os.Exit(1)
-//	}
-//	fmt.Printf("pixel: %v\n", pixels)
+	//	if err != nil {
+	//		fmt.Println("Error: Image could not be decoded")
+	//		os.Exit(1)
+	//	}
+	//	fmt.Printf("pixel: %v\n", pixels)
 }

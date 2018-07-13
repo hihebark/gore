@@ -1,11 +1,11 @@
 package core
 
 import (
-	"image"
-	"image/png"
-	"image/color"
-	"io"
 	"fmt"
+	"image"
+	"image/color"
+	"image/png"
+	"io"
 	"os"
 )
 
@@ -17,29 +17,29 @@ type Pixel struct {
 	A int
 }
 
-func MakeItGray(i io.Reader){
+func MakeItGray(i io.Reader) {
 	src, _, err := image.Decode(i)
 	if err != nil {
 		fmt.Printf("%v\n", err)
-    }
-    bounds := src.Bounds()
-    w, h := bounds.Max.X, bounds.Max.Y
-    gray := image.NewGray(bounds)
-    for x := 0; x < w; x++ {
-        for y := 0; y < h; y++ {
-            oldColor := src.At(x, y)
-            grayColor := color.GrayModel.Convert(oldColor)
-            gray.Set(x, y, grayColor)
-        }
-    }
+	}
+	bounds := src.Bounds()
+	w, h := bounds.Max.X, bounds.Max.Y
+	gray := image.NewGray(bounds)
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			oldColor := src.At(x, y)
+			grayColor := color.GrayModel.Convert(oldColor)
+			gray.Set(x, y, grayColor)
+		}
+	}
 
-    // Encode the grayscale image to the output file
-    outfile, err := os.Create("data/gray.png")
-    if err != nil {
-    	fmt.Printf("%v\n", err)
-    }
-    defer outfile.Close()
-    png.Encode(outfile, gray)
+	// Encode the grayscale image to the output file
+	outfile, err := os.Create(fmt.Sprintf("data/gray.png"))
+	if err != nil {
+		fmt.Printf("%v\n", err)
+	}
+	defer outfile.Close()
+	png.Encode(outfile, gray)
 }
 
 // Get the bi-dimensional pixel array
@@ -63,6 +63,7 @@ func GetPixels(file io.Reader) ([][]Pixel, error) {
 
 	return pixels, nil
 }
+
 // img.At(x, y).RGBA() returns four uint32 values; we want a Pixel
 func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
 	return Pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
