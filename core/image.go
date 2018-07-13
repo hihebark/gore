@@ -9,15 +9,46 @@ import (
 	"os"
 )
 
-// Pixel struct example
-type Pixel struct {
+type pixel struct {
 	R int
 	G int
 	B int
 	A int
 }
+type rect struct {
+	up        pixel
+	down      pixel
+	right     pixel
+	left      pixel
+	center    pixel
+	upleft    pixel
+	upright   pixel
+	downleft  pixel
+	downright pixel
+}
 
-func MakeItGray(i io.Reader) {
+func Start(i string) {
+	img, err := os.Open(i)
+	defer img.Close()
+	if err != nil {
+		fmt.Printf("image:Start:os.open base Image image:%s", i)
+	}
+	n, err := img.Stat()
+	fmt.Printf("Converting %s to gray.\n", n.Name())
+	makeItGray(img, n.Name())
+	imggray, err := os.Open(fmt.Sprintf("data/gray-%s", n.Name()))
+	defer img.Close()
+	if err != nil {
+		fmt.Printf("image:Start:os.open grayImage image:%s", i)
+	}
+	pixels, err := getPixels(imggray)
+	if err != nil {
+		fmt.Printf("image:Start:getPixels: image Format %v", err)
+	}
+	fmt.Printf("%v\n", pixels)
+}
+
+func makeItGray(i io.Reader, n string) {
 	src, _, err := image.Decode(i)
 	if err != nil {
 		fmt.Printf("%v\n", err)
@@ -32,39 +63,63 @@ func MakeItGray(i io.Reader) {
 			gray.Set(x, y, grayColor)
 		}
 	}
-
 	// Encode the grayscale image to the output file
-	outfile, err := os.Create(fmt.Sprintf("data/gray.png"))
+	outfile, err := os.Create(fmt.Sprintf("data/gray-%s", n))
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
 	defer outfile.Close()
 	png.Encode(outfile, gray)
 }
+func checkPixel(i io.Reader) {
+	img, _, err := image.Decode(i)
+	if err != nil {
+		fmt.Printf("image:checkPixel: %v\n", err)
+	}
+	bounds := img.Bounds()
+	width, height := bounds.Max.X, bounds.Max.Y
+	var r rect
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			v, z := x, y
+			r = rect{
+				up:        rgbaToPixel(img.At(v, z-1).RGBA()),
+				down:      rgbaToPixel(img.At(v, z+1).RGBA()),
+				right:     rgbaToPixel(img.At(v+1, z).RGBA()),
+				left:      rgbaToPixel(img.At(v-1, z).RGBA()),
+				center:    rgbaToPixel(img.At(x, y).RGBA()),
+				upleft:    rgbaToPixel(img.At(v-1, z-1).RGBA()),
+				upright:   rgbaToPixel(img.At(v+1, z-1).RGBA()),
+				downright: rgbaToPixel(img.At(v+1, z+1).RGBA()),
+				downleft:  rgbaToPixel(img.At(v-1, z+1).RGBA()),
+			}
+			//row = append(row, rgbaToPixel(img.At(x, y).RGBA()))
+		}
+	}
+	fmt.Printf("%v\n", r)
+}
 
 // Get the bi-dimensional pixel array
-func GetPixels(file io.Reader) ([][]Pixel, error) {
-	img, format, err := image.Decode(file)
+func getPixels(i io.Reader) ([][]pixel, error) {
+	img, format, err := image.Decode(i)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Printf("image Format: %s\n", format)
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
-
-	var pixels [][]Pixel
+	var pixels [][]pixel
 	for y := 0; y < height; y++ {
-		var row []Pixel
+		var row []pixel
 		for x := 0; x < width; x++ {
 			row = append(row, rgbaToPixel(img.At(x, y).RGBA()))
 		}
 		pixels = append(pixels, row)
 	}
-
 	return pixels, nil
 }
 
 // img.At(x, y).RGBA() returns four uint32 values; we want a Pixel
-func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
-	return Pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
+func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) pixel {
+	return pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
 }
