@@ -2,9 +2,11 @@ package core
 
 import (
 	"image"
-	_ "image/png"
+	"image/png"
+	"image/color"
 	"io"
 	"fmt"
+	"os"
 )
 
 // Pixel struct example
@@ -15,15 +17,38 @@ type Pixel struct {
 	A int
 }
 
+func MakeItGray(i io.Reader){
+	src, _, err := image.Decode(i)
+	if err != nil {
+		fmt.Printf("%v\n", err)
+    }
+    bounds := src.Bounds()
+    w, h := bounds.Max.X, bounds.Max.Y
+    gray := image.NewGray(bounds)
+    for x := 0; x < w; x++ {
+        for y := 0; y < h; y++ {
+            oldColor := src.At(x, y)
+            grayColor := color.GrayModel.Convert(oldColor)
+            gray.Set(x, y, grayColor)
+        }
+    }
+
+    // Encode the grayscale image to the output file
+    outfile, err := os.Create("data/gray.png")
+    if err != nil {
+    	fmt.Printf("%v\n", err)
+    }
+    defer outfile.Close()
+    png.Encode(outfile, gray)
+}
 
 // Get the bi-dimensional pixel array
 func GetPixels(file io.Reader) ([][]Pixel, error) {
-	img, _, err := image.Decode(file)
-
+	img, format, err := image.Decode(file)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("image Format: %s\n", format)
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 
@@ -37,25 +62,6 @@ func GetPixels(file io.Reader) ([][]Pixel, error) {
 	}
 
 	return pixels, nil
-}
-func GetRGBA(file io.Reader) {
-	
-	img, _, err := image.Decode(file)
-
-	if err != nil {
-		fmt.Printf("%v", err)
-	}
-
-	bounds := img.Bounds()
-	width, height := bounds.Max.X, bounds.Max.Y
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			r, g, b, a := img.At(x, y).RGBA()
-			fmt.Printf("%v - %v - %v - %v\n", r, g, b, a)
-			//row = append(row, rgbaToPixel(img.At(x, y).RGBA()))
-		}
-	}
-	
 }
 // img.At(x, y).RGBA() returns four uint32 values; we want a Pixel
 func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
