@@ -16,17 +16,20 @@ type pixel struct {
 	A int
 }
 type rect struct {
-	up        pixel
-	down      pixel
-	right     pixel
-	left      pixel
-	center    pixel
-	upleft    pixel
-	upright   pixel
-	downleft  pixel
-	downright pixel
+	up        color.Gray
+	down      color.Gray
+	right     color.Gray
+	left      color.Gray
+	center    color.Gray
+	upleft    color.Gray
+	upright   color.Gray
+	downleft  color.Gray
+	downright color.Gray
 }
-
+type maxArray struct{
+	key   int
+	value uint8
+}
 func Start(i string) {
 	img, err := os.Open(i)
 	defer img.Close()
@@ -37,15 +40,16 @@ func Start(i string) {
 	fmt.Printf("Converting %s to gray.\n", n.Name())
 	makeItGray(img, n.Name())
 	imggray, err := os.Open(fmt.Sprintf("data/gray-%s", n.Name()))
-	defer img.Close()
+	defer imggray.Close()
 	if err != nil {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
-	pixels, err := getPixels(imggray)
-	if err != nil {
-		fmt.Printf("image:Start:getPixels: image Format %v", err)
-	}
-	fmt.Printf("%v\n", pixels)
+	checkPixel(imggray)
+//	pixels, err := getPixels(imggray)
+//	if err != nil {
+//		fmt.Printf("image:Start:getPixels: image Format %v", err)
+//	}
+//	fmt.Printf("%v\n", pixels)
 }
 
 func makeItGray(i io.Reader, n string) {
@@ -71,6 +75,7 @@ func makeItGray(i io.Reader, n string) {
 	defer outfile.Close()
 	png.Encode(outfile, gray)
 }
+
 func checkPixel(i io.Reader) {
 	img, _, err := image.Decode(i)
 	if err != nil {
@@ -79,24 +84,42 @@ func checkPixel(i io.Reader) {
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 	var r rect
+	m := maxArray{
+		key:0,
+		value:0,
+	}
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 			v, z := x, y
 			r = rect{
-				up:        rgbaToPixel(img.At(v, z-1).RGBA()),
-				down:      rgbaToPixel(img.At(v, z+1).RGBA()),
-				right:     rgbaToPixel(img.At(v+1, z).RGBA()),
-				left:      rgbaToPixel(img.At(v-1, z).RGBA()),
-				center:    rgbaToPixel(img.At(x, y).RGBA()),
-				upleft:    rgbaToPixel(img.At(v-1, z-1).RGBA()),
-				upright:   rgbaToPixel(img.At(v+1, z-1).RGBA()),
-				downright: rgbaToPixel(img.At(v+1, z+1).RGBA()),
-				downleft:  rgbaToPixel(img.At(v-1, z+1).RGBA()),
+				up:        color.GrayModel.Convert(img.At(v, z-1)).(color.Gray),
+				down:      color.GrayModel.Convert(img.At(v, z+1)).(color.Gray),
+				right:     color.GrayModel.Convert(img.At(v+1, z)).(color.Gray),
+				left:      color.GrayModel.Convert(img.At(v-1, z)).(color.Gray),
+				center:    color.GrayModel.Convert(img.At(x, y)).(color.Gray),
+				upleft:    color.GrayModel.Convert(img.At(v-1, z-1)).(color.Gray),
+				upright:   color.GrayModel.Convert(img.At(v+1, z-1)).(color.Gray),
+				downright: color.GrayModel.Convert(img.At(v+1, z+1)).(color.Gray),
+				downleft:  color.GrayModel.Convert(img.At(v-1, z+1)).(color.Gray),
 			}
-			//row = append(row, rgbaToPixel(img.At(x, y).RGBA()))
+			ar := [][]uint8{
+				{r.upleft.Y, r.up.Y, r.upright.Y},
+				{r.left.Y, 0, r.right.Y},
+				{r.downleft.Y, r.down.Y, r.downright.Y},
+			}
+			
+			for _, v := range ar {
+				for key, val := range v {
+					if val > m.value {
+						m.key = key
+						m.value = val
+					}
+				}
+			}
+			
 		}
 	}
-	fmt.Printf("%v\n", r)
+	fmt.Printf("%v - %v\n", m.value, m.key)
 }
 
 // Get the bi-dimensional pixel array
