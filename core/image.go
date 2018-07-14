@@ -26,9 +26,10 @@ type rect struct {
 	downleft  color.Gray
 	downright color.Gray
 }
-type maxArray struct{
-	key   int
-	value uint8
+type maxArray struct{	
+	val uint8
+	key int
+	niv int
 }
 func Start(i string) {
 	img, err := os.Open(i)
@@ -44,7 +45,7 @@ func Start(i string) {
 	if err != nil {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
-	checkPixel(imggray)
+	checkPixel(imggray, n.Name())
 //	pixels, err := getPixels(imggray)
 //	if err != nil {
 //		fmt.Printf("image:Start:getPixels: image Format %v", err)
@@ -76,18 +77,26 @@ func makeItGray(i io.Reader, n string) {
 	png.Encode(outfile, gray)
 }
 
-func checkPixel(i io.Reader) {
+func checkPixel(i io.Reader, n string) {
 	img, _, err := image.Decode(i)
 	if err != nil {
 		fmt.Printf("image:checkPixel: %v\n", err)
 	}
 	bounds := img.Bounds()
+	arrow := image.NewGray(bounds)
 	width, height := bounds.Max.X, bounds.Max.Y
-	var r rect
+	position := [][]string{
+				{"upleft", "up", "upright"},
+				{"left", "center", "right"},
+				{"downleft", "down", "downright"},
+			}
 	m := maxArray{
-		key:0,
-		value:0,
+		key: 0,
+		val: 0,
+		niv: 0,
 	}
+	r := rect{}
+	ar := [][]uint8{}
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 			v, z := x, y
@@ -102,24 +111,59 @@ func checkPixel(i io.Reader) {
 				downright: color.GrayModel.Convert(img.At(v+1, z+1)).(color.Gray),
 				downleft:  color.GrayModel.Convert(img.At(v-1, z+1)).(color.Gray),
 			}
-			ar := [][]uint8{
+			ar = [][]uint8{
 				{r.upleft.Y, r.up.Y, r.upright.Y},
 				{r.left.Y, 0, r.right.Y},
 				{r.downleft.Y, r.down.Y, r.downright.Y},
 			}
 			
-			for _, v := range ar {
+			for k, v := range ar {
 				for key, val := range v {
-					if val > m.value {
-						m.key = key
-						m.value = val
+					if val > m.val {
+						m = maxArray{
+							key: key,
+							val: val,
+							niv: k,
+						}
 					}
 				}
 			}
-			
+			//fmt.Printf("%s - ",position[m.niv][m.key])
+			switch position[m.niv][m.key]{
+				case "upleft":
+					arrow.Set(v-1, z-1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "up":
+					arrow.Set(v, z-1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "upright":
+					arrow.Set(v+1, z-1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "right":
+					arrow.Set(v+1, z, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "left":
+					arrow.Set(v-1, z, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "downleft":
+					arrow.Set(v-1, z+1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "down":
+					arrow.Set(v, z+1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+				case "downright":
+					arrow.Set(v+1, z+1, color.RGBA{0, 0, 0, 0})
+					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+			}
 		}
 	}
-	fmt.Printf("%v - %v\n", m.value, m.key)
+	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s", n))
+	if err != nil {
+		fmt.Printf("%v\n", err)
+	}
+	defer outfile.Close()
+	png.Encode(outfile, arrow)
+	fmt.Printf("ar: %v\nm: %v\nr: %v\n", ar, m, r)
 }
 
 // Get the bi-dimensional pixel array
