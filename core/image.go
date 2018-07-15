@@ -138,28 +138,20 @@ func checkPixel(i io.Reader, n string) {
 			switch position[m.niv][m.key] {
 			case "upleft":
 				arrow.Set(v-1, z-1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "up":
 				arrow.Set(v, z-1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "upright":
 				arrow.Set(v+1, z-1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "right":
 				arrow.Set(v+1, z, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "left":
 				arrow.Set(v-1, z, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "downleft":
 				arrow.Set(v-1, z+1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "down":
 				arrow.Set(v, z+1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			case "downright":
 				arrow.Set(v+1, z+1, color.RGBA{255, 0, 0, 255})
-				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			}
 			arrow.Set(x, y, color.RGBA{255, 0, 0, 255})
 		}
