@@ -26,11 +26,12 @@ type rect struct {
 	downleft  color.Gray
 	downright color.Gray
 }
-type maxArray struct{	
+type maxArray struct {
 	val uint8
 	key int
 	niv int
 }
+
 func Start(i string) {
 	img, err := os.Open(i)
 	defer img.Close()
@@ -46,11 +47,11 @@ func Start(i string) {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
 	checkPixel(imggray, n.Name())
-//	pixels, err := getPixels(imggray)
-//	if err != nil {
-//		fmt.Printf("image:Start:getPixels: image Format %v", err)
-//	}
-//	fmt.Printf("%v\n", pixels)
+	//	pixels, err := getPixels(imggray)
+	//	if err != nil {
+	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
+	//	}
+	//	fmt.Printf("%v\n", pixels)
 }
 
 func makeItGray(i io.Reader, n string) {
@@ -86,10 +87,10 @@ func checkPixel(i io.Reader, n string) {
 	arrow := image.NewGray(bounds)
 	width, height := bounds.Max.X, bounds.Max.Y
 	position := [][]string{
-				{"upleft", "up", "upright"},
-				{"left", "center", "right"},
-				{"downleft", "down", "downright"},
-			}
+		{"upleft", "up", "upright"},
+		{"left", "center", "right"},
+		{"downleft", "down", "downright"},
+	}
 	m := maxArray{
 		key: 0,
 		val: 0,
@@ -97,6 +98,11 @@ func checkPixel(i io.Reader, n string) {
 	}
 	r := rect{}
 	ar := [][]uint8{}
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			arrow.Set(x, y, color.RGBA{255, 255, 255, 255})
+		}
+	}
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
 			v, z := x, y
@@ -116,7 +122,7 @@ func checkPixel(i io.Reader, n string) {
 				{r.left.Y, 0, r.right.Y},
 				{r.downleft.Y, r.down.Y, r.downright.Y},
 			}
-			
+
 			for k, v := range ar {
 				for key, val := range v {
 					if val > m.val {
@@ -129,32 +135,33 @@ func checkPixel(i io.Reader, n string) {
 				}
 			}
 			//fmt.Printf("%s - ",position[m.niv][m.key])
-			switch position[m.niv][m.key]{
-				case "upleft":
-					arrow.Set(v-1, z-1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "up":
-					arrow.Set(v, z-1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "upright":
-					arrow.Set(v+1, z-1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "right":
-					arrow.Set(v+1, z, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "left":
-					arrow.Set(v-1, z, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "downleft":
-					arrow.Set(v-1, z+1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "down":
-					arrow.Set(v, z+1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
-				case "downright":
-					arrow.Set(v+1, z+1, color.RGBA{0, 0, 0, 0})
-					arrow.Set(x, y, color.RGBA{0, 0, 0, 0})		//center
+			switch position[m.niv][m.key] {
+			case "upleft":
+				arrow.Set(v-1, z-1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "up":
+				arrow.Set(v, z-1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "upright":
+				arrow.Set(v+1, z-1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "right":
+				arrow.Set(v+1, z, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "left":
+				arrow.Set(v-1, z, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "downleft":
+				arrow.Set(v-1, z+1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "down":
+				arrow.Set(v, z+1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
+			case "downright":
+				arrow.Set(v+1, z+1, color.RGBA{255, 0, 0, 255})
+				//arrow.Set(x, y, color.RGBA{255, 0, 0, 255}) //center
 			}
+			arrow.Set(x, y, color.RGBA{255, 0, 0, 255})
 		}
 	}
 	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s", n))
