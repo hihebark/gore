@@ -7,6 +7,7 @@ import (
 	"image/png"
 	"io"
 	"os"
+	"strings"
 )
 
 type pixel struct {
@@ -38,21 +39,22 @@ func Start(i string) {
 	if err != nil {
 		fmt.Printf("image:Start:os.open base Image image:%s", i)
 	}
-	n, err := img.Stat()
+	n, _ := img.Stat()
+	name := strings.Split(n.Name(), ".")[0]
 	imdecode, err := decode(img)
 	if err != nil {
-		fmt.Printf("error image decode image: %s error: %v", n.Name, err.Error)
+		fmt.Printf("error image decode image: %s error: %v", name, err.Error)
 	}
 	if imdecode.ColorModel() != color.GrayModel {
 		fmt.Printf("Converting image to grayscale")
-		makeItGray(imdecode, n.Name())
+		makeItGray(imdecode, name)
 	}
-	imggray, err := os.Open(fmt.Sprintf("data/gray-%s", n.Name()))
+	imggray, err := os.Open(fmt.Sprintf("data/gray-%s.gore.png", name))
 	defer imggray.Close()
 	if err != nil {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
-	checkPixel(imggray, n.Name())
+	checkPixel(imggray, name)
 	//	pixels, err := getPixels(imggray)
 	//	if err != nil {
 	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
@@ -81,7 +83,7 @@ func makeItGray(img image.Image, n string) {
 		}
 	}
 	// Encode the grayscale image to the output file
-	outfile, err := os.Create(fmt.Sprintf("data/gray-%s", n))
+	outfile, err := os.Create(fmt.Sprintf("data/gray-%s.gore.png", n))
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
@@ -167,7 +169,7 @@ func checkPixel(i io.Reader, n string) {
 			arrow.Set(x, y, color.Black)
 		}
 	}
-	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s", n))
+	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s.gore.png", n))
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
