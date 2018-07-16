@@ -67,11 +67,11 @@ func decode(i io.Reader) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	return img, err
+	return img, nil
 }
 
 func makeItGray(img image.Image, n string) {
-	
+
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
