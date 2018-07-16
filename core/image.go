@@ -39,8 +39,14 @@ func Start(i string) {
 		fmt.Printf("image:Start:os.open base Image image:%s", i)
 	}
 	n, err := img.Stat()
-	fmt.Printf("Converting %s to gray.\n", n.Name())
-	makeItGray(img, n.Name())
+	imdecode, err := decode(img)
+	if err != nil {
+		fmt.Printf("error image decode image: %s error: %v", n.Name, err.Error)
+	}
+	if imdecode.ColorModel() != color.GrayModel {
+		fmt.Printf("Converting image to grayscale")
+		makeItGray(imdecode, n.Name())
+	}
 	imggray, err := os.Open(fmt.Sprintf("data/gray-%s", n.Name()))
 	defer imggray.Close()
 	if err != nil {
@@ -54,17 +60,22 @@ func Start(i string) {
 	//	fmt.Printf("%v\n", pixels)
 }
 
-func makeItGray(i io.Reader, n string) {
-	src, _, err := image.Decode(i)
+func decode(i io.Reader) (image.Image, error) {
+	img, _, err := image.Decode(i)
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		return nil, err
 	}
-	bounds := src.Bounds()
+	return img, err
+}
+
+func makeItGray(img image.Image, n string) {
+	
+	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
-			oldColor := src.At(x, y)
+			oldColor := img.At(x, y)
 			grayColor := color.GrayModel.Convert(oldColor)
 			gray.Set(x, y, grayColor)
 		}
@@ -135,25 +146,25 @@ func checkPixel(i io.Reader, n string) {
 				}
 			}
 			//fmt.Printf("%s - ",position[m.niv][m.key])
-			switch position[m.niv][m.key] {
+			switch position[m.key][m.niv] {
 			case "upleft":
-				arrow.Set(v-1, z-1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v-1, z-1, color.Black)
 			case "up":
-				arrow.Set(v, z-1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v, z-1, color.Black)
 			case "upright":
-				arrow.Set(v+1, z-1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v+1, z-1, color.Black)
 			case "right":
-				arrow.Set(v+1, z, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v+1, z, color.Black)
 			case "left":
-				arrow.Set(v-1, z, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v-1, z, color.Black)
 			case "downleft":
-				arrow.Set(v-1, z+1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v-1, z+1, color.Black)
 			case "down":
-				arrow.Set(v, z+1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v, z+1, color.Black)
 			case "downright":
-				arrow.Set(v+1, z+1, color.RGBA{255, 0, 0, 255})
+				arrow.Set(v+1, z+1, color.Black)
 			}
-			arrow.Set(x, y, color.RGBA{255, 0, 0, 255})
+			arrow.Set(x, y, color.Black)
 		}
 	}
 	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s", n))
