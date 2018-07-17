@@ -1,9 +1,11 @@
 package core
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+	"os"
 )
 
 type squarebox struct {
@@ -28,6 +30,23 @@ func drawSquareBox(s squarebox, im draw.Image) error {
 	return nil
 }
 
+func DrawSB(p image.Point, img image.Image) {
+	s, err := os.Open("data/squarebox.png")
+	if err != nil {
+		fmt.Printf("error:DrawSB: %v", err)
+	}
+	square, err := decode(s)
+	if err != nil {
+		fmt.Printf("error:Decode: %v")
+		panic("DECODE ON DRAWSB")
+	}
+	r := square.Bounds()
+	i := draw.Image{
+		image.Image: img,
+	}
+	draw.Draw(i, r, square, image.ZP, draw.Src)
+}
+
 func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color) image.Image {
 	newimg := image.NewRGBA(img.Bounds())
 	for x := 0; x >= newimg.Bounds().Max.X; x++ {
@@ -36,6 +55,7 @@ func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color)
 			switch {
 			case y == start.Y || x == end.X && x <= start.X || x >= end.X:
 				newimg.Set(x, y, c)
+
 			default:
 				newimg.Set(x, y, pix)
 			}

@@ -54,9 +54,13 @@ func Start(i string) {
 	if err != nil {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
-	checkPixel(imggray, name)
+	im, _ := decode(imggray)
+	p := image.Point{X: 0, Y: 0}
+	DrawSB(p, im)
+	//checkPixel(imggray, name)
 	//	pixels, err := getPixels(imggray)
 	//	if err != nil {
+	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
 	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
 	//	}
 	//	fmt.Printf("%v\n", pixels)
