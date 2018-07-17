@@ -77,18 +77,20 @@ func makeItGray(img image.Image, n string) {
 	gray := image.NewGray(bounds)
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
-			oldColor := img.At(x, y)
-			grayColor := color.GrayModel.Convert(oldColor)
-			gray.Set(x, y, grayColor)
+			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
 		}
 	}
 	// Encode the grayscale image to the output file
 	outfile, err := os.Create(fmt.Sprintf("data/gray-%s.gore.png", n))
 	if err != nil {
-		fmt.Printf("%v\n", err)
+		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", n, err)
 	}
 	defer outfile.Close()
 	png.Encode(outfile, gray)
+}
+
+func splitImagetoSquare(img image.Image) {
+	//split my image to 16x16 sub image and
 }
 
 func checkPixel(i io.Reader, n string) {
@@ -113,7 +115,7 @@ func checkPixel(i io.Reader, n string) {
 	ar := [][]uint8{}
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
-			arrow.Set(x, y, color.RGBA{255, 255, 255, 255})
+			arrow.Set(x, y, color.White)
 		}
 	}
 	for y := 0; y < height; y++ {
