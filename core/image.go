@@ -54,7 +54,7 @@ func Start(i string) {
 	if err != nil {
 		fmt.Printf("image:Start:os.open grayImage image:%s", i)
 	}
-	im, _ := decode(imggray)
+	im := decode(imggray)
 	p := image.Point{X: 0, Y: 0}
 	DrawSB(p, im)
 	//checkPixel(imggray, name)
@@ -66,12 +66,13 @@ func Start(i string) {
 	//	fmt.Printf("%v\n", pixels)
 }
 
-func decode(i io.Reader) (image.Image, error) {
+func decode(i io.Reader) image.Image {
 	img, _, err := image.Decode(i)
 	if err != nil {
-		return nil, err
+		fmt.Printf("error decode image : %v", err)
+		//return nil, err
 	}
-	return img, nil
+	return img
 }
 
 func makeItGray(img image.Image, n string) {
