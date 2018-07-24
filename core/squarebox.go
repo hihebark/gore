@@ -37,7 +37,7 @@ func DrawSB(p image.Point, img image.Image) {
 	}
 	square := decode(s)
 	//	i := draw.Image{img}
-	draw.Draw(img, square.Bounds(), square, image.ZP, draw.Src)
+	draw.Draw(image.NewRGBA(img.Bounds()), square.Bounds(), square, image.ZP, draw.Src)
 }
 
 func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color) image.Image {
