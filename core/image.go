@@ -37,22 +37,22 @@ func Start(i string) {
 	img, err := os.Open(i)
 	defer img.Close()
 	if err != nil {
-		fmt.Printf("image:Start:os.open base Image image:%s", i)
+		fmt.Printf("image:Start:os.open base Image image:%s\n", i)
 	}
 	n, _ := img.Stat()
 	name := strings.Split(n.Name(), ".")[0]
 	imdecode := decode(img)
 	if err != nil {
-		fmt.Printf("error image decode image: %s error: %v", name, err.Error)
+		fmt.Printf("error image decode image: %s error: %v\n", name, err.Error)
 	}
 	if imdecode.ColorModel() != color.GrayModel {
-		fmt.Printf("Converting image to grayscale")
+		fmt.Printf("Converting image to grayscale\n")
 		makeItGray(imdecode, name)
 	}
 	imggray, err := os.Open(fmt.Sprintf("data/gray-%s.gore.png", name))
 	defer imggray.Close()
 	if err != nil {
-		fmt.Printf("image:Start:os.open grayImage image:%s", i)
+		fmt.Printf("image:Start:os.open grayImage image:%s\n", i)
 	}
 	im := decode(imggray)
 	p := image.Point{X: 0, Y: 0}
@@ -69,7 +69,7 @@ func Start(i string) {
 func decode(i io.Reader) image.Image {
 	img, _, err := image.Decode(i)
 	if err != nil {
-		fmt.Printf("error decode image : %v", err)
+		fmt.Printf("error decode image : %v\n", err)
 		//return nil, err
 		panic("Decode")
 	}
