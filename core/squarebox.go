@@ -36,10 +36,8 @@ func DrawSB(p image.Point, img image.Image) {
 		fmt.Printf("error:DrawSB: %v", err)
 	}
 	square := decode(s)
-	i := draw.Image{
-		image.Image: img,
-	}
-	draw.Draw(i, square.Bounds(), square, image.ZP, draw.Src)
+	//	i := draw.Image{img}
+	draw.Draw(img, square.Bounds(), square, image.ZP, draw.Src)
 }
 
 func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color) image.Image {

@@ -41,7 +41,7 @@ func Start(i string) {
 	}
 	n, _ := img.Stat()
 	name := strings.Split(n.Name(), ".")[0]
-	imdecode, err := decode(img)
+	imdecode := decode(img)
 	if err != nil {
 		fmt.Printf("error image decode image: %s error: %v", name, err.Error)
 	}
@@ -71,6 +71,7 @@ func decode(i io.Reader) image.Image {
 	if err != nil {
 		fmt.Printf("error decode image : %v", err)
 		//return nil, err
+		panic("Decode")
 	}
 	return img
 }
