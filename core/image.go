@@ -10,12 +10,17 @@ import (
 	"strings"
 )
 
+type Op struct {
+	format string
+}
+
 type pixel struct {
 	R int
 	G int
 	B int
 	A int
 }
+
 type rect struct {
 	up        color.Gray
 	down      color.Gray
