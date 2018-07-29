@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/jpeg"
 	"image/png"
 	"io"
 	"os"
@@ -12,6 +13,14 @@ import (
 
 type Op struct {
 	format string
+	name   string
+}
+
+func newOp(f, n string) *Op {
+	return &Op{
+		format: f,
+		name:   n,
+	}
 }
 
 type pixel struct {
@@ -38,51 +47,25 @@ type maxArray struct {
 	niv int
 }
 
-func Start(i string) {
-	img, err := os.Open(i)
+func Start(path string) {
+
+	img, err := os.Open(path)
 	defer img.Close()
 	if err != nil {
-		fmt.Printf("image:Start:os.open base Image image:%s\n", i)
+		fmt.Printf("image:start:os.Open path:%s\n", path)
 	}
-	n, _ := img.Stat()
-	name := strings.Split(n.Name(), ".")[0]
-	imdecode := decode(img)
-	if err != nil {
-		fmt.Printf("error image decode image: %s error: %v\n", name, err.Error)
-	}
-	if imdecode.ColorModel() != color.GrayModel {
+
+	info, _ := img.Stat()
+	name := strings.Split(info.Name(), ".")[0]
+	imgdec, form := decode(img)
+	op := newOp(form, name)
+	if imgdec.ColorModel() != color.GrayModel {
 		fmt.Printf("Converting image to grayscale\n")
-		makeItGray(imdecode, name)
+		op.grayscaleI(imgdec)
 	}
-	imggray, err := os.Open(fmt.Sprintf("data/gray-%s.gore.png", name))
-	defer imggray.Close()
-	if err != nil {
-		fmt.Printf("image:Start:os.open grayImage image:%s\n", i)
-	}
-	im := decode(imggray)
-	p := image.Point{X: 0, Y: 0}
-	DrawSB(p, im)
-	//checkPixel(imggray, name)
-	//	pixels, err := getPixels(imggray)
-	//	if err != nil {
-	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
-	//		fmt.Printf("image:Start:getPixels: image Format %v", err)
-	//	}
-	//	fmt.Printf("%v\n", pixels)
+
 }
-
-func decode(i io.Reader) image.Image {
-	img, _, err := image.Decode(i)
-	if err != nil {
-		fmt.Printf("error decode image : %v\n", err)
-		//return nil, err
-		panic("Decode")
-	}
-	return img
-}
-
-func makeItGray(img image.Image, n string) {
-
+func (o *Op) grayscaleI(img image.Image) {
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
@@ -91,13 +74,29 @@ func makeItGray(img image.Image, n string) {
 			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
 		}
 	}
-	// Encode the grayscale image to the output file
-	outfile, err := os.Create(fmt.Sprintf("data/gray-%s.gore.png", n))
+	o.saveI("grayscaled", gray)
+}
+func (o *Op) saveI(name string, img image.Image) {
+	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, o.name, o.format))
 	if err != nil {
-		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", n, err)
+		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
 	}
-	defer outfile.Close()
-	png.Encode(outfile, gray)
+	defer out.Close()
+	switch o.format {
+	case "png":
+		png.Encode(out, img)
+	case "jpg":
+		jpeg.Encode(out, img, nil)
+	}
+}
+
+func decode(i io.Reader) (image.Image, string) {
+	img, f, err := image.Decode(i)
+	if err != nil {
+		fmt.Printf("error while decoding image: %v\n", err)
+		panic("Decode")
+	}
+	return img, f
 }
 
 func splitImagetoSquare(img image.Image) {

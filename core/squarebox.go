@@ -35,7 +35,7 @@ func DrawSB(p image.Point, img image.Image) {
 	if err != nil {
 		fmt.Printf("error:DrawSB: %v", err)
 	}
-	square := decode(s)
+	square, _ := decode(s)
 	//	i := draw.Image{img}
 	draw.Draw(image.NewRGBA(img.Bounds()), square.Bounds(), square, image.ZP, draw.Src)
 }
