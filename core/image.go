@@ -11,15 +11,17 @@ import (
 	"strings"
 )
 
-type Op struct {
+type imageInfo struct {
 	format string
 	name   string
+	bounds image.Rectangle
 }
 
-func newOp(f, n string) *Op {
-	return &Op{
+func newImageInfo(f, n string, b image.Rectangle) *imageInfo {
+	return &imageInfo{
 		format: f,
 		name:   n,
+		bounds: b,
 	}
 }
 
@@ -58,14 +60,14 @@ func Start(path string) {
 	info, _ := img.Stat()
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
-	op := newOp(form, name)
+	ii := newImageInfo(form, name, imgdec.Bounds())
 	if imgdec.ColorModel() != color.GrayModel {
-		fmt.Printf("Converting image to grayscale\n")
-		op.grayscaleI(imgdec)
+		ii.grayscaleI(imgdec)
 	}
 
 }
-func (o *Op) grayscaleI(img image.Image) {
+func (ii *imageInfo) grayscaleI(img image.Image) {
+	fmt.Printf("[*] Converting %s to grascale image ...\n", ii.name)
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
@@ -74,14 +76,15 @@ func (o *Op) grayscaleI(img image.Image) {
 			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
 		}
 	}
-	o.saveI("grayscaled", gray)
+	ii.saveI("grayscaled", gray)
 }
-func (o *Op) saveI(name string, img image.Image) {
-	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, o.name, o.format))
+func (ii *imageInfo) saveI(name string, img image.Image) {
+	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, ii.name, ii.format))
 	if err != nil {
 		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
 	}
 	defer out.Close()
+	fmt.Printf("[*] Saving %s-%s.gore.%s\n", name, ii.name, ii.format)
 	switch o.format {
 	case "png":
 		png.Encode(out, img)
@@ -99,8 +102,15 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
-func splitImagetoSquare(img image.Image) {
-	//split my image to 16x16 sub image and
+func (ii *imageInfo) dividI(img image.Image) {
+	//divid img to 16x16 images
+	bounds := ii.bounds
+	w, h := bounds.Max.X, bounds.Max.Y
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			//
+		}
+	}
 }
 
 func checkPixel(i io.Reader, n string) {
