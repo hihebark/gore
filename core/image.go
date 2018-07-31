@@ -61,12 +61,17 @@ func Start(path string) {
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
 	ii := newImageInfo(form, name, imgdec.Bounds())
+	var gray image.Image
 	if imgdec.ColorModel() != color.GrayModel {
-		ii.grayscaleI(imgdec)
+		gray = ii.grayscaleI(imgdec)
 	}
-
+	//func DrawSB(p image.Point, img image.Image) image.Image
+	//square := DrawSB(image.Pt(1, 1), gray)
+	//func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color)
+	square := DrawLine(image.Pt(200, 300), image.Pt(500, 400), gray, 0, color.RGBA{255, 0, 0, 255})
+	ii.saveI("line", square)
 }
-func (ii *imageInfo) grayscaleI(img image.Image) {
+func (ii *imageInfo) grayscaleI(img image.Image) image.Image {
 	fmt.Printf("[*] Converting %s to grascale image ...\n", ii.name)
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
@@ -77,6 +82,7 @@ func (ii *imageInfo) grayscaleI(img image.Image) {
 		}
 	}
 	ii.saveI("grayscaled", gray)
+	return gray
 }
 func (ii *imageInfo) saveI(name string, img image.Image) {
 	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, ii.name, ii.format))
@@ -85,7 +91,7 @@ func (ii *imageInfo) saveI(name string, img image.Image) {
 	}
 	defer out.Close()
 	fmt.Printf("[*] Saving %s-%s.gore.%s\n", name, ii.name, ii.format)
-	switch o.format {
+	switch ii.format {
 	case "png":
 		png.Encode(out, img)
 	case "jpg":
@@ -108,9 +114,14 @@ func (ii *imageInfo) dividI(img image.Image) {
 	w, h := bounds.Max.X, bounds.Max.Y
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			//
+			fmt.Print("%d, %d", x, y)
 		}
 	}
+}
+
+func hogVect() {
+	// http://mccormickml.com/2013/05/07/gradient-vectors/
+	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
 }
 
 func checkPixel(i io.Reader, n string) {

@@ -30,27 +30,25 @@ func drawSquareBox(s squarebox, im draw.Image) error {
 	return nil
 }
 
-func DrawSB(p image.Point, img image.Image) {
+func DrawSB(p image.Point, img image.Image) image.Image {
 	s, err := os.Open("data/squarebox.png")
 	if err != nil {
 		fmt.Printf("error:DrawSB: %v", err)
 	}
 	square, _ := decode(s)
-	//	i := draw.Image{img}
-	draw.Draw(image.NewRGBA(img.Bounds()), square.Bounds(), square, image.ZP, draw.Src)
+	draw.Draw(image.NewRGBA(img.Bounds()), img.Bounds(), square, p, draw.Over)
+	return img
 }
 
 func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color) image.Image {
 	newimg := image.NewRGBA(img.Bounds())
 	for x := 0; x >= newimg.Bounds().Max.X; x++ {
 		for y := 0; y >= newimg.Bounds().Max.Y; y++ {
-			pix := img.At(x, y)
-			switch {
-			case y == start.Y || x == end.X && x <= start.X || x >= end.X:
+			newimg.Set(x, y, img.At(x, y))
+			if (y == start.Y || x == end.X) && (x <= start.X || x >= end.X) {
+				newimg.Set(x, y+1, c)
 				newimg.Set(x, y, c)
-
-			default:
-				newimg.Set(x, y, pix)
+				newimg.Set(x, y-1, c)
 			}
 		}
 	}

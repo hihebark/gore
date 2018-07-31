@@ -11,6 +11,6 @@ import (
 *******************************************************************************/
 
 func main() {
-	fmt.Println("Gore - 0.0.0")
-	core.Start("data/RMS.png")
+	fmt.Println(" Gore - 0.0.0")
+	core.Start("data/harold.png")
 }
