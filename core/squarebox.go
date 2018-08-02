@@ -45,8 +45,8 @@ func DrawSB(p image.Point, img image.Image) image.Image {
 	square, _ := decode(s)
 	dst := image.NewRGBA(img.Bounds())
 	//draw.Copy(dst, image.Pt(100, 100), square, square.Bounds(), draw.Src, nil)
-	draw.Draw(dst, img.Bounds(), square, square.Bounds().Min, draw.Src)
-	draw.ApproxBiLinear.Scale(dst, dst.Bounds(), square, square.Bounds(), draw.Over, nil)
-	draw.DrawMask(dst, img.Bounds(), square, image.ZP, square, image.ZP, draw.Over)
+	draw.Draw(dst, img.Bounds(), square, square.Bounds().Min, draw.Over)
+	//draw.ApproxBiLinear.Scale(dst, dst.Bounds(), square, square.Bounds(), draw.Over, nil)
+	//draw.DrawMask(dst, img.Bounds(), square, image.ZP, square, image.ZP, draw.Over)
 	return img
 }

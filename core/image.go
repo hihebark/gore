@@ -65,9 +65,6 @@ func Start(path string) {
 	if imgdec.ColorModel() != color.GrayModel {
 		gray = ii.grayscaleI(imgdec)
 	}
-	//func DrawSB(p image.Point, img image.Image) image.Image
-	//square := DrawSB(image.Pt(100, 100), gray)
-	//func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color)
 	sq := squarebox{
 		a: image.Pt(200, 50),
 		b: image.Pt(400, 50),
@@ -75,7 +72,7 @@ func Start(path string) {
 		d: image.Pt(400, 250),
 	}
 	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
-	ii.saveI("line", square)
+	ii.saveI("drawsquare", square)
 }
 func (ii *imageInfo) grayscaleI(img image.Image) image.Image {
 	fmt.Printf("[*] Converting %s to grascale image ...\n", ii.name)
@@ -116,6 +113,7 @@ func decode(i io.Reader) (image.Image, string) {
 
 func (ii *imageInfo) dividI(img image.Image) {
 	//divid img to 16x16 images
+	//imgs := []image.Image
 	bounds := ii.bounds
 	w, h := bounds.Max.X, bounds.Max.Y
 	for y := 0; y < h; y++ {
@@ -128,6 +126,7 @@ func (ii *imageInfo) dividI(img image.Image) {
 func hogVect() {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
 	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
+
 }
 
 func checkPixel(i io.Reader, n string) {
