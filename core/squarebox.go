@@ -4,30 +4,37 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
+	//"image/draw"
 	"os"
+
+	"golang.org/x/image/draw"
 )
 
 type squarebox struct {
-	x0, y0, x1, y1 int
+	a, b, c, d image.Point
 }
 
-func drawSquareBox(s squarebox, im draw.Image) error {
-	draw.Draw(im,
-		image.Rectangle{
-			Min: image.Point{
-				X: s.x0,
-				Y: s.y0,
-			},
-			Max: image.Point{
-				X: s.x1,
-				Y: s.y1,
-			},
-		},
-		image.Transparent,
-		image.ZP,
-		draw.Src)
-	return nil
+//DrawLine draw line
+func drawsquare(sq squarebox, img image.Image, density int, c color.Color) image.Image {
+	bounds := img.Bounds()
+	nimg := image.NewRGBA(bounds)
+	w, h := bounds.Max.X, bounds.Max.Y
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			nimg.Set(x, y, img.At(x, y))
+			if (y == sq.a.Y && (x >= sq.a.X && x <= sq.b.X)) ||
+				(y == sq.c.Y && (x >= sq.c.X && x <= sq.d.X)) ||
+				(x == sq.a.X && (y >= sq.a.Y && y <= sq.c.Y)) ||
+				(x == sq.b.X && (y >= sq.b.Y && y <= sq.d.Y)) {
+				for i := density; i >= 0; i-- {
+					nimg.Set(x-i, y-i, c)
+					nimg.Set(x+i, y+i, c)
+				}
+				nimg.Set(x, y, c)
+			}
+		}
+	}
+	return nimg
 }
 
 func DrawSB(p image.Point, img image.Image) image.Image {
@@ -36,21 +43,10 @@ func DrawSB(p image.Point, img image.Image) image.Image {
 		fmt.Printf("error:DrawSB: %v", err)
 	}
 	square, _ := decode(s)
-	draw.Draw(image.NewRGBA(img.Bounds()), img.Bounds(), square, p, draw.Over)
+	dst := image.NewRGBA(img.Bounds())
+	//draw.Copy(dst, image.Pt(100, 100), square, square.Bounds(), draw.Src, nil)
+	draw.Draw(dst, img.Bounds(), square, square.Bounds().Min, draw.Src)
+	draw.ApproxBiLinear.Scale(dst, dst.Bounds(), square, square.Bounds(), draw.Over, nil)
+	draw.DrawMask(dst, img.Bounds(), square, image.ZP, square, image.ZP, draw.Over)
 	return img
-}
-
-func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color) image.Image {
-	newimg := image.NewRGBA(img.Bounds())
-	for x := 0; x >= newimg.Bounds().Max.X; x++ {
-		for y := 0; y >= newimg.Bounds().Max.Y; y++ {
-			newimg.Set(x, y, img.At(x, y))
-			if (y == start.Y || x == end.X) && (x <= start.X || x >= end.X) {
-				newimg.Set(x, y+1, c)
-				newimg.Set(x, y, c)
-				newimg.Set(x, y-1, c)
-			}
-		}
-	}
-	return newimg
 }

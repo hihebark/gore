@@ -66,9 +66,15 @@ func Start(path string) {
 		gray = ii.grayscaleI(imgdec)
 	}
 	//func DrawSB(p image.Point, img image.Image) image.Image
-	//square := DrawSB(image.Pt(1, 1), gray)
+	//square := DrawSB(image.Pt(100, 100), gray)
 	//func DrawLine(start, end image.Point, img image.Image, thick int, c color.Color)
-	square := DrawLine(image.Pt(200, 300), image.Pt(500, 400), gray, 0, color.RGBA{255, 0, 0, 255})
+	sq := squarebox{
+		a: image.Pt(200, 50),
+		b: image.Pt(400, 50),
+		c: image.Pt(200, 250),
+		d: image.Pt(400, 250),
+	}
+	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
 	ii.saveI("line", square)
 }
 func (ii *imageInfo) grayscaleI(img image.Image) image.Image {
