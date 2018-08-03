@@ -111,28 +111,29 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
+func hogVect(img image.Image) {
+	// http://mccormickml.com/2013/05/07/gradient-vectors/
+	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
+	// magnitude   = np.sqrt(x**2 + y**2)
+	// orientation = (arctan2(y, x) * 180 / np.pi) % 360
+	cells := dividI(img, 16)
+	for _, cell := range cells {
+		fmt.Printf("%v\n", cell)
+	}
+}
+
 func dividI(img image.Image, s int) []image.Rectangle {
-	//divid img to 16x16 images
+	//divid img to 16x16 cells
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
-	nx, ny := int(w/s), int(h/s)
-	cells := make([]image.Rectangle, (nx * ny))
+	cells := make([]image.Rectangle, (int(w/s) * int(h/s)))
 	for y := s; y < h; y += s {
 		for x := s; x < w; x += s {
-			//fmt.Print("%d, %d", x, y)
 			cells[i] = image.Rect(x-s, y-s, x, y)
 			i++
 		}
 	}
 	return cells
-}
-
-func hogVect() {
-	// http://mccormickml.com/2013/05/07/gradient-vectors/
-	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
-	//magnitude = np.sqrt(x**2 + y**2)
-	//orientation = (arctan2(y, x) * 180 / np.pi) % 360
-
 }
 
 func checkPixel(i io.Reader, n string) {
