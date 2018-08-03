@@ -60,10 +60,10 @@ func Start(path string) {
 	info, _ := img.Stat()
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
-	ii := newImageInfo(form, name, imgdec.Bounds())
+	imginf := newImageInfo(form, name, imgdec.Bounds())
 	var gray image.Image
 	if imgdec.ColorModel() != color.GrayModel {
-		gray = ii.grayscaleI(imgdec)
+		gray = imginf.grayscaleI(imgdec)
 	}
 	sq := squarebox{
 		a: image.Pt(200, 50),
@@ -72,10 +72,10 @@ func Start(path string) {
 		d: image.Pt(400, 250),
 	}
 	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
-	ii.saveI("drawsquare", square)
+	imginf.saveI("drawsquare", square)
 }
-func (ii *imageInfo) grayscaleI(img image.Image) image.Image {
-	fmt.Printf("[*] Converting %s to grascale image ...\n", ii.name)
+func (i *imageInfo) grayscaleI(img image.Image) image.Image {
+	fmt.Printf("[*] Converting %s to grascale image ...\n", i.name)
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
@@ -84,17 +84,17 @@ func (ii *imageInfo) grayscaleI(img image.Image) image.Image {
 			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
 		}
 	}
-	ii.saveI("grayscaled", gray)
+	i.saveI("grayscaled", gray)
 	return gray
 }
-func (ii *imageInfo) saveI(name string, img image.Image) {
-	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, ii.name, ii.format))
+func (i *imageInfo) saveI(name string, img image.Image) {
+	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.name, i.format))
 	if err != nil {
 		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
 	}
 	defer out.Close()
-	fmt.Printf("[*] Saving %s-%s.gore.%s\n", name, ii.name, ii.format)
-	switch ii.format {
+	fmt.Printf("[*] Saving %s-%s.gore.%s\n", name, i.name, i.format)
+	switch i.format {
 	case "png":
 		png.Encode(out, img)
 	case "jpg":
@@ -111,21 +111,27 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
-func (ii *imageInfo) dividI(img image.Image) {
+func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 images
-	//imgs := []image.Image
-	bounds := ii.bounds
-	w, h := bounds.Max.X, bounds.Max.Y
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			fmt.Print("%d, %d", x, y)
+	bounds := img.Bounds()
+	w, h, i := bounds.Max.X, bounds.Max.Y, 0
+	nx, ny := int(w/s), int(h/s)
+	cells := make([]image.Rectangle, (nx * ny))
+	for y := s; y < h; y += s {
+		for x := s; x < w; x += s {
+			//fmt.Print("%d, %d", x, y)
+			cells[i] = image.Rect(x-s, y-s, x, y)
+			i++
 		}
 	}
+	return cells
 }
 
 func hogVect() {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
 	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
+	//magnitude = np.sqrt(x**2 + y**2)
+	//orientation = (arctan2(y, x) * 180 / np.pi) % 360
 
 }
 
