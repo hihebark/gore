@@ -63,7 +63,8 @@ func Start(path string) {
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds())
 	gray := imginf.grayscaleI(imgdec)
-	hogVect(gray)
+	imginf.saveI("scaled", scaleImage(gray, 2))
+	//hogVect(gray)
 	/*sq := squarebox{
 		a: image.Pt(200, 50),
 		b: image.Pt(400, 50),
@@ -139,10 +140,10 @@ func dividI(img image.Image, s int) []image.Rectangle {
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
 	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
-	for y := s; y < h; y += s {
-		for x := s; x < w; x += s {
+	for y := 0; y < h; y += s {
+		for x := 0; x < w; x += s {
 			v, z := x, y
-			cells[i] = image.Rect(v-s, z-s, x, y)
+			cells[i] = image.Rect(v+s, z+s, x, y)
 			i++
 		}
 	}
