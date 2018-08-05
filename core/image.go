@@ -7,7 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	_ "math"
+	"math"
 	"os"
 	"strings"
 )
@@ -116,11 +116,11 @@ func decode(i io.Reader) (image.Image, string) {
 
 func hogVect(img image.Image) {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
-	// magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
+	// magnitude   := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
 	cells := dividI(img, 16)
 	fmt.Printf("len %d - cap %d\n", len(cells), cap(cells))
-	/*for k, cell := range cells {
+	for k, cell := range cells {
 		for y := 0; y < cell.Max.Y; y++ {
 			for x := 0; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
@@ -131,7 +131,7 @@ func hogVect(img image.Image) {
 			fmt.Println("")
 		}
 		fmt.Println("\t%d", k)
-	}*/
+	}
 }
 
 func dividI(img image.Image, s int) []image.Rectangle {
