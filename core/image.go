@@ -7,7 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"math"
+	_ "math"
 	"os"
 	"strings"
 )
@@ -116,36 +116,33 @@ func decode(i io.Reader) (image.Image, string) {
 
 func hogVect(img image.Image) {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
-	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
 	// magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
 	cells := dividI(img, 16)
-	for _, cell := range cells {
+	fmt.Printf("len %d - cap %d\n", len(cells), cap(cells))
+	/*for k, cell := range cells {
 		for y := 0; y < cell.Max.Y; y++ {
 			for x := 0; x < cell.Max.X; x++ {
-				yu := img.At(x, y-1).(color.Gray).Y
-				yd := img.At(x, y+1).(color.Gray).Y
-				xl := img.At(x-1, y).(color.Gray).Y
-				xr := img.At(x+1, y).(color.Gray).Y
-				ydir := math.Abs(float64(yu - yd))
-				xdir := math.Abs(float64(xl - xr))
-				magnitude, orientation := gradientVector(xdir, ydir)
+				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
+				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
+				magnitude, orientation := gradientVector(xd, yd)
 				fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
 			}
 			fmt.Println("")
 		}
-		fmt.Println("")
-	}
+		fmt.Println("\t%d", k)
+	}*/
 }
 
 func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
-	cells := make([]image.Rectangle, (int(w/s) * int(h/s)))
+	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
 	for y := s; y < h; y += s {
 		for x := s; x < w; x += s {
-			cells[i] = image.Rect(x-s, y-s, x, y)
+			v, z := x, y
+			cells[i] = image.Rect(v-s, z-s, x, y)
 			i++
 		}
 	}
