@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"math"
 	"os"
 	"strings"
 )
@@ -61,21 +62,23 @@ func Start(path string) {
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds())
-	var gray image.Image
-	if imgdec.ColorModel() != color.GrayModel {
-		gray = imginf.grayscaleI(imgdec)
-	}
-	sq := squarebox{
+	gray := imginf.grayscaleI(imgdec)
+	hogVect(gray)
+	/*sq := squarebox{
 		a: image.Pt(200, 50),
 		b: image.Pt(400, 50),
 		c: image.Pt(200, 250),
 		d: image.Pt(400, 250),
 	}
 	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
-	imginf.saveI("drawsquare", square)
+	imginf.saveI("drawsquare", square)*/
 }
 func (i *imageInfo) grayscaleI(img image.Image) image.Image {
 	fmt.Printf("[*] Converting %s to grascale image ...\n", i.name)
+	if img.ColorModel() == color.GrayModel {
+		i.saveI("grayscaled", img)
+		return img
+	}
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
@@ -114,11 +117,24 @@ func decode(i io.Reader) (image.Image, string) {
 func hogVect(img image.Image) {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
 	// when divided take each block of 16x16 pixel and find where is the highest pixel is.
-	// magnitude   = np.sqrt(x**2 + y**2)
-	// orientation = (arctan2(y, x) * 180 / np.pi) % 360
+	// magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
+	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
 	cells := dividI(img, 16)
 	for _, cell := range cells {
-		fmt.Printf("%v\n", cell)
+		for y := 0; y < cell.Max.Y; y++ {
+			for x := 0; x < cell.Max.X; x++ {
+				yu := img.At(x, y-1).(color.Gray).Y
+				yd := img.At(x, y+1).(color.Gray).Y
+				xl := img.At(x-1, y).(color.Gray).Y
+				xr := img.At(x+1, y).(color.Gray).Y
+				ydir := math.Abs(float64(yu - yd))
+				xdir := math.Abs(float64(xl - xr))
+				magnitude, orientation := gradientVector(xdir, ydir)
+				fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
+			}
+			fmt.Println("")
+		}
+		fmt.Println("")
 	}
 }
 
