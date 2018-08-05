@@ -13,16 +13,18 @@ import (
 )
 
 type imageInfo struct {
-	format string
-	name   string
-	bounds image.Rectangle
+	format   string
+	name     string
+	bounds   image.Rectangle
+	sizescal int
 }
 
-func newImageInfo(f, n string, b image.Rectangle) *imageInfo {
+func newImageInfo(f, n string, b image.Rectangle, s int) *imageInfo {
 	return &imageInfo{
-		format: f,
-		name:   n,
-		bounds: b,
+		format:   f,
+		name:     n,
+		bounds:   b,
+		sizescal: s,
 	}
 }
 
@@ -61,9 +63,9 @@ func Start(path string) {
 	info, _ := img.Stat()
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
-	imginf := newImageInfo(form, name, imgdec.Bounds())
+	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := imginf.grayscaleI(imgdec)
-	imginf.saveI("scaled", scaleImage(gray, 2))
+	imginf.saveI("scaled", scaleImage(gray, imginf.sizescal))
 	//hogVect(gray)
 	/*sq := squarebox{
 		a: image.Pt(200, 50),
