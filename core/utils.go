@@ -14,15 +14,17 @@ func gradientVector(x, y float64) (float64, float64) {
 	return magnitude, orientation
 }
 func drawLine(p image.Point, angle, length float64, img image.Image) image.Image {
-	nimg := image.NewRGBA(img.Bounds())
+	mask, dst := image.NewRGBA(img.Bounds()), image.NewRGBA(img.Bounds())
 	x2 := math.Round(float64(p.X) + (length * math.Cos(angle)))
 	y2 := math.Round(float64(p.Y) + (length * math.Sin(angle)))
 	slop := (x2 - float64(p.X)) / (y2 - float64(p.Y))
 	b := int(float64(p.Y) - slop*float64(p.X))
 	for x := p.X; x <= int(x2); x++ {
-		nimg.Set(x, int(slop*float64(x))+b, color.White)
+		mask.Set(x, int(slop*float64(x))+b, color.White)
 	}
-	return nimg
+	draw.Draw(dst, img.Bounds(), img, image.ZP, draw.Src)
+	draw.Draw(dst, mask.Bounds(), mask, image.ZP, draw.Over)
+	return dst
 }
 
 func scaleImage(img image.Image, size int) image.Image {
