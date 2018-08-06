@@ -64,22 +64,26 @@ func Start(path string) {
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
-	gray := imginf.grayscaleI(imgdec)
-	imginf.saveI("scaled", scaleImage(gray, imginf.sizescal))
+	gray := grayscaleI(imgdec)
+	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
+	imginf.saveI("line", line)
+	//imginf.saveI("scaled", scaleImage(gray, imginf.sizescal))
 	//hogVect(gray)
-	/*sq := squarebox{
+	/*************
+	* Draw square.
+	sq := squarebox{
 		a: image.Pt(200, 50),
 		b: image.Pt(400, 50),
 		c: image.Pt(200, 250),
 		d: image.Pt(400, 250),
 	}
 	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
-	imginf.saveI("drawsquare", square)*/
+	imginf.saveI("drawsquare", square)
+	**************************************************************/
 }
-func (i *imageInfo) grayscaleI(img image.Image) image.Image {
-	fmt.Printf("[*] Converting %s to grascale image ...\n", i.name)
+func grayscaleI(img image.Image) image.Image {
+	fmt.Printf("[*] Grascaling image ...\n")
 	if img.ColorModel() == color.GrayModel {
-		i.saveI("grayscaled", img)
 		return img
 	}
 	bounds := img.Bounds()
@@ -90,7 +94,6 @@ func (i *imageInfo) grayscaleI(img image.Image) image.Image {
 			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
 		}
 	}
-	i.saveI("grayscaled", gray)
 	return gray
 }
 func (i *imageInfo) saveI(name string, img image.Image) {
@@ -136,7 +139,6 @@ func hogVect(img image.Image) {
 		fmt.Println("\t%d", k)
 	}
 }
-
 func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
@@ -152,6 +154,7 @@ func dividI(img image.Image, s int) []image.Rectangle {
 	return cells
 }
 
+/*******************************************************
 func checkPixel(i io.Reader, n string) {
 	img, _, err := image.Decode(i)
 	if err != nil {
@@ -238,8 +241,7 @@ func checkPixel(i io.Reader, n string) {
 	png.Encode(outfile, arrow)
 	fmt.Printf("ar: %v\nm: %v\nr: %v\n", ar, m, r)
 }
-
-// Get the bi-dimensional pixel array
+******************************************************************************/
 func getPixels(i io.Reader) ([][]pixel, error) {
 	img, format, err := image.Decode(i)
 	if err != nil {
@@ -258,8 +260,6 @@ func getPixels(i io.Reader) ([][]pixel, error) {
 	}
 	return pixels, nil
 }
-
-// img.At(x, y).RGBA() returns four uint32 values; we want a Pixel
 func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) pixel {
 	return pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
 }

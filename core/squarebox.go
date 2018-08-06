@@ -1,13 +1,9 @@
 package core
 
 import (
-	"fmt"
 	"image"
 	"image/color"
-	//"image/draw"
-	"os"
-
-	"golang.org/x/image/draw"
+	//	"golang.org/x/image/draw"
 )
 
 type squarebox struct {
@@ -26,17 +22,18 @@ func drawsquare(sq squarebox, img image.Image, density int, c color.Color) image
 				(y == sq.c.Y && (x >= sq.c.X && x <= sq.d.X)) ||
 				(x == sq.a.X && (y >= sq.a.Y && y <= sq.c.Y)) ||
 				(x == sq.b.X && (y >= sq.b.Y && y <= sq.d.Y)) {
+
 				for i := density; i >= 0; i-- {
 					nimg.Set(x-i, y-i, c)
 					nimg.Set(x+i, y+i, c)
 				}
-				nimg.Set(x, y, c)
 			}
 		}
 	}
 	return nimg
 }
 
+/******************************************************************************************
 func DrawSB(p image.Point, img image.Image) image.Image {
 	s, err := os.Open("data/squarebox.png")
 	if err != nil {
@@ -50,3 +47,4 @@ func DrawSB(p image.Point, img image.Image) image.Image {
 	//draw.DrawMask(dst, img.Bounds(), square, image.ZP, square, image.ZP, draw.Over)
 	return img
 }
+********************************************************************************************/
