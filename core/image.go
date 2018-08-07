@@ -10,6 +10,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	//"sync"
 )
 
 type imageInfo struct {
@@ -65,12 +66,15 @@ func Start(path string) {
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
-	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
-	imginf.saveI("line", line)
-	//imginf.saveI("scaled", scaleImage(gray, imginf.sizescal))
+	//imginf.saveI("grayscaled", gray)
+	scaledimg := scaleImage(gray, 2)
+	nimg := hogVect(scaledimg)
+	imginf.saveI("hog", nimg)
 	//hogVect(gray)
 	/*************
-	* Draw square.
+	* Draw square
+	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
+	imginf.saveI("line", line)
 	sq := squarebox{
 		a: image.Pt(200, 50),
 		b: image.Pt(400, 50),
@@ -120,34 +124,34 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
-func hogVect(img image.Image) {
-	// http://mccormickml.com/2013/05/07/gradient-vectors/
-	// magnitude   := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
-	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
+func hogVect(img image.Image) image.Image {
+	nimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
 	cells := dividI(img, 16)
-	fmt.Printf("len %d - cap %d\n", len(cells), cap(cells))
+	fmt.Printf("[*] There is %d cells\n", len(cells))
 	for k, cell := range cells {
-		for y := 0; y < cell.Max.Y; y++ {
-			for x := 0; x < cell.Max.X; x++ {
+		fmt.Printf("[!] Processing with %d cell\r", k)
+		for y := cell.Min.Y; y < cell.Max.Y; y++ {
+			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
+				nimg = drawLine(image.Pt(x, y), orientation, magnitude, nimg)
+				//fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
 			}
-			fmt.Println("")
 		}
-		fmt.Println("\t%d", k)
 	}
+	fmt.Printf("\n")
+	return nimg
 }
 func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
 	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
-	for y := 0; y < h; y += s {
-		for x := 0; x < w; x += s {
+	for y := 16; y < h; y += s {
+		for x := 16; x < w; x += s {
 			v, z := x, y
-			cells[i] = image.Rect(v+s, z+s, x, y)
+			cells[i] = image.Rect(v-s, z-s, x, y)
 			i++
 		}
 	}

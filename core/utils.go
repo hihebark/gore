@@ -9,6 +9,10 @@ import (
 )
 
 func gradientVector(x, y float64) (float64, float64) {
+	// http://mccormickml.com/2013/05/07/gradient-vectors/
+	// magnitude   := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
+	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
+
 	magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	orientation := math.Mod((math.Atan2(x, y) * 180 / math.Pi), float64(360))
 	return magnitude, orientation
@@ -29,7 +33,12 @@ func drawLine(p image.Point, angle, length float64, img image.Image) image.Image
 
 func scaleImage(img image.Image, size int) image.Image {
 	rect := image.Rect(0, 0, img.Bounds().Max.X/size, img.Bounds().Max.Y/size)
-	dstimg := image.NewRGBA(rect)
+	dstimg := image.NewGray(rect)
 	draw.ApproxBiLinear.Scale(dstimg, rect, img, img.Bounds(), draw.Over, nil)
 	return dstimg
+}
+func newImage(r image.Rectangle, c color.Color) image.Image {
+	nimg := image.NewNRGBA(r)
+	draw.Draw(nimg, nimg.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
+	return nimg
 }
