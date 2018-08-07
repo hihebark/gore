@@ -11,9 +11,7 @@ gore is a tool to detect (and recognize) face (shape?) in an image, without the 
 
 Result:
 -------
-
-##NOT YET
-
+## NOT YET
 Not done yet but hope to get into this result.
 <p align="center"><img src="GoreProject.png" width="500"></p>
 
