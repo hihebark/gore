@@ -9,10 +9,12 @@ gore is a tool to detect (and recognize) face (shape?) in an image, without the 
 * [HOG Person Detector Tutorial](http://mccormickml.com/2013/05/09/hog-person-detector-tutorial/)
 * [Gradient Vectors](http://mccormickml.com/2013/05/07/gradient-vectors/)
 
-Resutl:
+Result:
 -------
 
-Not done but hope to get into this result.
+##NOT YET
+
+Not done yet but hope to get into this result.
 <p align="center"><img src="GoreProject.png" width="500"></p>
 
 Steps:
