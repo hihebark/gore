@@ -2,16 +2,14 @@
 
 gore:
 =====
-
 gore is a tool to detect (and recognize) face (shape?) in an image, without the use of OpenCV or another library. it use HOG [Histogram of Oriented Gradients](https://en.wikipedia.org/wiki/Histogram_of_oriented_gradients), further link to check:
-
 * [Machine Learning is Fun! Part 4: Modern Face Recognition with Deep Learning](https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78)
 * [HOG Person Detector Tutorial](http://mccormickml.com/2013/05/09/hog-person-detector-tutorial/)
 * [Gradient Vectors](http://mccormickml.com/2013/05/07/gradient-vectors/)
 
 Result:
 -------
-## NOT YET
+#### NOT YET
 Not done yet but hope to get into this result.
 <p align="center"><img src="GoreProject.png" width="500"></p>
 

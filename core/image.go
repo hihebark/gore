@@ -66,23 +66,19 @@ func Start(path string) {
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
-	//imginf.saveI("grayscaled", gray)
+	imginf.saveI("grayscaled", gray)
+	/*************************************************************
+	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
+	imginf.saveI("line", line)
+	imginf.saveI("sq",
+		drawsquare(gray,
+					image.Rect(200, 50, 400, 250),
+					2,
+					color.RGBA{255, 255, 0, 255}))
 	scaledimg := scaleImage(gray, 2)
 	nimg := hogVect(scaledimg)
 	imginf.saveI("hog", nimg)
-	//hogVect(gray)
-	/*************
-	* Draw square
-	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
-	imginf.saveI("line", line)
-	sq := squarebox{
-		a: image.Pt(200, 50),
-		b: image.Pt(400, 50),
-		c: image.Pt(200, 250),
-		d: image.Pt(400, 250),
-	}
-	square := drawsquare(sq, gray, 2, color.RGBA{255, 255, 0, 255})
-	imginf.saveI("drawsquare", square)
+	hogVect(gray)
 	**************************************************************/
 }
 func grayscaleI(img image.Image) image.Image {
