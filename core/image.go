@@ -13,6 +13,12 @@ import (
 	//"sync"
 )
 
+type pixel struct {
+	R int
+	G int
+	B int
+	A int
+}
 type imageInfo struct {
 	format   string
 	name     string
@@ -29,32 +35,8 @@ func newImageInfo(f, n string, b image.Rectangle, s int) *imageInfo {
 	}
 }
 
-type pixel struct {
-	R int
-	G int
-	B int
-	A int
-}
-
-type rect struct {
-	up        color.Gray
-	down      color.Gray
-	right     color.Gray
-	left      color.Gray
-	center    color.Gray
-	upleft    color.Gray
-	upright   color.Gray
-	downleft  color.Gray
-	downright color.Gray
-}
-type maxArray struct {
-	val uint8
-	key int
-	niv int
-}
-
+//Start detecting face in image given.
 func Start(path string) {
-
 	img, err := os.Open(path)
 	defer img.Close()
 	if err != nil {
@@ -135,6 +117,7 @@ func hogVect(img image.Image) image.Image {
 				//fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
 			}
 		}
+		//TODO array
 	}
 	fmt.Printf("\n")
 	return nimg
@@ -153,95 +136,6 @@ func dividI(img image.Image, s int) []image.Rectangle {
 	}
 	return cells
 }
-
-/*******************************************************
-func checkPixel(i io.Reader, n string) {
-	img, _, err := image.Decode(i)
-	if err != nil {
-		fmt.Printf("image:checkPixel: %v\n", err)
-	}
-	bounds := img.Bounds()
-	arrow := image.NewGray(bounds)
-	width, height := bounds.Max.X, bounds.Max.Y
-	position := [][]string{
-		{"upleft", "up", "upright"},
-		{"left", "center", "right"},
-		{"downleft", "down", "downright"},
-	}
-	m := maxArray{
-		key: 0,
-		val: 0,
-		niv: 0,
-	}
-	r := rect{}
-	ar := [][]uint8{}
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			arrow.Set(x, y, color.White)
-		}
-	}
-	for y := 0; y < height; y++ {
-		for x := 0; x < width; x++ {
-			v, z := x, y
-			r = rect{
-				up:        color.GrayModel.Convert(img.At(v, z-1)).(color.Gray),
-				down:      color.GrayModel.Convert(img.At(v, z+1)).(color.Gray),
-				right:     color.GrayModel.Convert(img.At(v+1, z)).(color.Gray),
-				left:      color.GrayModel.Convert(img.At(v-1, z)).(color.Gray),
-				center:    color.GrayModel.Convert(img.At(x, y)).(color.Gray),
-				upleft:    color.GrayModel.Convert(img.At(v-1, z-1)).(color.Gray),
-				upright:   color.GrayModel.Convert(img.At(v+1, z-1)).(color.Gray),
-				downright: color.GrayModel.Convert(img.At(v+1, z+1)).(color.Gray),
-				downleft:  color.GrayModel.Convert(img.At(v-1, z+1)).(color.Gray),
-			}
-			ar = [][]uint8{
-				{r.upleft.Y, r.up.Y, r.upright.Y},
-				{r.left.Y, 0, r.right.Y},
-				{r.downleft.Y, r.down.Y, r.downright.Y},
-			}
-
-			for k, v := range ar {
-				for key, val := range v {
-					if val > m.val {
-						m = maxArray{
-							key: key,
-							val: val,
-							niv: k,
-						}
-					}
-				}
-			}
-			//fmt.Printf("%s - ",position[m.niv][m.key])
-			switch position[m.key][m.niv] {
-			case "upleft":
-				arrow.Set(v-1, z-1, color.Black)
-			case "up":
-				arrow.Set(v, z-1, color.Black)
-			case "upright":
-				arrow.Set(v+1, z-1, color.Black)
-			case "right":
-				arrow.Set(v+1, z, color.Black)
-			case "left":
-				arrow.Set(v-1, z, color.Black)
-			case "downleft":
-				arrow.Set(v-1, z+1, color.Black)
-			case "down":
-				arrow.Set(v, z+1, color.Black)
-			case "downright":
-				arrow.Set(v+1, z+1, color.Black)
-			}
-			arrow.Set(x, y, color.Black)
-		}
-	}
-	outfile, err := os.Create(fmt.Sprintf("data/gray-arrow-%s.gore.png", n))
-	if err != nil {
-		fmt.Printf("%v\n", err)
-	}
-	defer outfile.Close()
-	png.Encode(outfile, arrow)
-	fmt.Printf("ar: %v\nm: %v\nr: %v\n", ar, m, r)
-}
-******************************************************************************/
 func getPixels(i io.Reader) ([][]pixel, error) {
 	img, format, err := image.Decode(i)
 	if err != nil {
