@@ -10,6 +10,8 @@ import (
 	"math"
 	"os"
 	"strings"
+
+	"golang.org/x/image/draw"
 )
 
 type pixel struct {
@@ -120,7 +122,9 @@ func hogVect(img image.Image) image.Image {
 			}
 		}
 		// TODO
-		nimg = drawCellinImage(imgcell, nimg, image.Pt(cell.Min.X, cell.Min.Y))
+		// nimg = drawCellinImage(imgcell, nimg, image.Pt(cell.Min.X, cell.Min.Y))
+		r := image.Rect(cell.Min.X, cell.Min.Y, nimg.Bounds().Max.X, nimg.Bounds().Max.Y)
+		draw.Draw(nimg, r, imgcell, image.Pt(cell.Min.X, cell.Min.Y), draw.Over)
 	}
 	fmt.Println("")
 	return nimg
