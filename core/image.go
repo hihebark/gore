@@ -122,9 +122,7 @@ func hogVect(img image.Image) image.Image {
 			}
 		}
 		// TODO
-		// nimg = drawCellinImage(imgcell, nimg, image.Pt(cell.Min.X, cell.Min.Y))
-		r := image.Rect(cell.Min.X, cell.Min.Y, nimg.Bounds().Max.X, nimg.Bounds().Max.Y)
-		draw.Draw(nimg, r, imgcell, image.Pt(cell.Min.X, cell.Min.Y), draw.Over)
+		draw.Draw(nimg, imgcell.Bounds(), imgcell, image.Pt(cell.Min.X, cell.Min.Y), draw.Over)
 	}
 	fmt.Println("")
 	return nimg
