@@ -42,3 +42,7 @@ func newImage(r image.Rectangle, c color.Color) image.Image {
 	draw.Draw(nimg, nimg.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
 	return nimg
 }
+func squaretoImage(imgs, imgd image.Image, r image.Rectangle, p image.Point) image.Image {
+	draw.Draw(imgd, r, imgs, p, draw.Src)
+	return imgd
+}

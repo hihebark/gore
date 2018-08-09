@@ -108,12 +108,14 @@ func hogVect(img image.Image) image.Image {
 	fmt.Printf("[*] There is %d cells\n", len(cells))
 	for k, cell := range cells {
 		fmt.Printf("[!] Processing with %d cell\r", k)
+		imgcell := newImage(cell, color.RGBA{0, 0, 0, 255})
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				nimg = drawLine(image.Pt(cell.Min.X, cell.Max.Y), orientation, magnitude, nimg)
+				imgcell = drawLine(image.Pt(cell.Min.X, cell.Max.Y), orientation, magnitude, imgcell)
+				nimg = squaretoImage(imgcell, nimg, imgcell.Bounds(), image.Pt(cell.Min.X, cell.Min.Y))
 				//fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
 			}
 		}
