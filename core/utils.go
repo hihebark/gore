@@ -38,11 +38,16 @@ func scaleImage(img image.Image, size int) image.Image {
 	return dstimg
 }
 func newImage(r image.Rectangle, c color.Color) image.Image {
-	nimg := image.NewNRGBA(r)
+	nimg := image.NewRGBA(r)
 	draw.Draw(nimg, nimg.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
 	return nimg
 }
-func squaretoImage(imgs, imgd image.Image, r image.Rectangle, p image.Point) image.Image {
-	draw.Draw(imgd, r, imgs, p, draw.Src)
+func drawCellinImage(imgs image.Image, imgd *image.RGBA, p image.Point) *image.RGBA {
+	//nimgd := image.NewRGBA(imgd.Bounds())
+	//draw.Copy(nimgd, image.ZP, imgd, nimgd.Bounds(), draw.Src, nil)
+	//	draw.Copy(imgd, p, imgs, imgs.Bounds(), draw.Over, nil)
+	//draw.Draw(nimgd, nimgd.Bounds(), imgd, image.ZP, draw.Src)
+	r := image.Rect(p.X+imgs.Bounds().Min.X, p.Y+imgs.Bounds().Min.Y, imgd.Bounds().Max.X, imgd.Bounds().Max.Y)
+	draw.Draw(imgd, r, imgs, p, draw.Over)
 	return imgd
 }

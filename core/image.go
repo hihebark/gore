@@ -103,9 +103,11 @@ func decode(i io.Reader) (image.Image, string) {
 }
 
 func hogVect(img image.Image) image.Image {
-	nimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
+	//nimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
+	nimg := image.NewRGBA(img.Bounds())
 	cells := dividI(img, 16)
-	fmt.Printf("[*] There is %d cells\n", len(cells))
+	fmt.Printf("[*] There is %d cells\n", len(cells)-1)
+	//	fmt.Printf("%v\n", cells)
 	for k, cell := range cells {
 		fmt.Printf("[!] Processing with %d cell\r", k)
 		imgcell := newImage(cell, color.RGBA{0, 0, 0, 255})
@@ -114,12 +116,11 @@ func hogVect(img image.Image) image.Image {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(image.Pt(cell.Min.X, cell.Max.Y), orientation, magnitude, imgcell)
-				nimg = squaretoImage(imgcell, nimg, imgcell.Bounds(), image.Pt(cell.Min.X, cell.Min.Y))
-				//fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
+				imgcell = drawLine(image.Pt(int(cell.Max.X/2), int(cell.Max.Y/2)), orientation, magnitude, imgcell)
 			}
 		}
-		//TODO array
+		// TODO
+		nimg = drawCellinImage(imgcell, nimg, image.Pt(cell.Min.X, cell.Min.Y))
 	}
 	fmt.Println("")
 	return nimg
