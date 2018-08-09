@@ -10,7 +10,6 @@ import (
 	"math"
 	"os"
 	"strings"
-	//"sync"
 )
 
 type pixel struct {
@@ -49,6 +48,7 @@ func Start(path string) {
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
 	imginf.saveI("grayscaled", gray)
+	imginf.saveI("lines", hogVect(scaleImage(gray, 2)))
 	/*************************************************************
 	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
 	imginf.saveI("line", line)
@@ -113,13 +113,13 @@ func hogVect(img image.Image) image.Image {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				nimg = drawLine(image.Pt(x, y), orientation, magnitude, nimg)
+				nimg = drawLine(image.Pt(cell.Min.X, cell.Max.Y), orientation, magnitude, nimg)
 				//fmt.Printf("mag:%v ori:%v ", magnitude, orientation)
 			}
 		}
 		//TODO array
 	}
-	fmt.Printf("\n")
+	fmt.Println("")
 	return nimg
 }
 func dividI(img image.Image, s int) []image.Rectangle {
