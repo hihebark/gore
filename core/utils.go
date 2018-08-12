@@ -45,9 +45,8 @@ func newImage(r image.Rectangle, c color.Color) image.Image {
 func drawCellinImage(imgs image.Image, imgd *image.RGBA, p image.Point) *image.RGBA {
 	//nimgd := image.NewRGBA(imgd.Bounds())
 	//draw.Copy(nimgd, image.ZP, imgd, nimgd.Bounds(), draw.Src, nil)
-	//	draw.Copy(imgd, p, imgs, imgs.Bounds(), draw.Over, nil)
+	//draw.Copy(imgd, p, imgs, imgs.Bounds(), draw.Over, nil)
 	//draw.Draw(nimgd, nimgd.Bounds(), imgd, image.ZP, draw.Src)
-	//r := image.Rect(p.X+imgs.Bounds().Min.X, p.Y+imgs.Bounds().Min.Y, imgd.Bounds().Max.X, imgd.Bounds().Max.Y)
 	draw.Draw(imgd, image.Rect(p.X, p.Y, imgs.Bounds().Max.X, imgs.Bounds().Max.Y), imgs, p, draw.Over)
 	return imgd
 }

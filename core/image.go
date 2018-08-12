@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/image/draw"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -10,8 +11,6 @@ import (
 	"math"
 	"os"
 	"strings"
-
-	"golang.org/x/image/draw"
 )
 
 type pixel struct {
@@ -105,33 +104,37 @@ func decode(i io.Reader) (image.Image, string) {
 }
 
 func hogVect(img image.Image) image.Image {
-	//nimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
-	nimg := image.NewRGBA(img.Bounds())
+	//dstimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
+	dstimg := image.NewRGBA(img.Bounds())
+	draw.Draw(dstimg, img.Bounds(), img, image.ZP, draw.Src)
 	cells := dividI(img, 16)
 	fmt.Printf("[*] There is %d cells\n", len(cells)-1)
 	//	fmt.Printf("%v\n", cells)
 	for k, cell := range cells {
-		fmt.Printf("[!] Processing with %d cell\r", k)
+		//fmt.Printf("[!] Processing with %d cell\r", k)
 		imgcell := newImage(cell, color.RGBA{0, 0, 0, 255})
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(image.Pt(int(cell.Max.X/2), int(cell.Max.Y/2)), orientation, magnitude, imgcell)
+				imgcell = drawLine(cell.Min.Div(2), orientation, magnitude, imgcell)
 			}
 		}
-		// TODO
-		draw.Draw(nimg, imgcell.Bounds(), imgcell, image.Pt(cell.Min.X, cell.Min.Y), draw.Over)
+		if imgcell.Bounds().Empty() {
+			fmt.Printf("%d Empty.\n", k)
+		}
+		draw.Draw(dstimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 	}
 	fmt.Println("")
-	return nimg
+	return dstimg
 }
 func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
 	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
+	//	draw.Draw(nimg, imgcell.Bounds(), imgcell, image.Pt(64, 64), draw.Over)
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
