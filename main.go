@@ -12,5 +12,6 @@ import (
 
 func main() {
 	fmt.Println(" Gore - 0.0.0")
-	core.Start("data/RMS.png")
+	core.Start("data/harold.png")
+	//core.Start("data/RMS.png")
 }

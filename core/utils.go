@@ -23,7 +23,7 @@ func drawLine(p image.Point, angle, length float64, img image.Image, c color.Col
 	y2 := math.Round(float64(p.Y) + (length * math.Sin(angle)))
 	slop := (x2 - float64(p.X)) / (y2 - float64(p.Y))
 	b := int(float64(p.Y) - slop*float64(p.X))
-	for x := p.X + 8; x <= int(x2); x++ {
+	for x := p.X; x <= int(x2); x++ {
 		mask.Set(x, int(slop*float64(x))+b, c)
 	}
 	draw.Draw(dst, img.Bounds(), img, img.Bounds().Min, draw.Src)
