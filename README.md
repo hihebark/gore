@@ -20,7 +20,7 @@ Steps:
 - [x] Draw square.
 - [x] Divid the image into 16*16 cells.
 - [ ] Find face.
-- [x] Output the image surrounding the face(s) with rectangle box.
+- [x] Output the image surrounding the face(s) with rectangle box. (almost)
 - [ ] Analyze the face.
 - [ ] Compare.
 - [ ] Predection.

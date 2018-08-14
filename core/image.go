@@ -52,21 +52,16 @@ func Start(path string) {
 	imgdec, form := decode(img)
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
-	imginf.saveI("grayscaled", gray)
-	imginf.saveI("lines", imginf.hogVect(scaleImage(gray, 2)))
+	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
+	imginf.saveI("HOG", imginf.hogVect(gray))
 	imginf.wg.Wait()
+
 	/*************************************************************
-	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
-	imginf.saveI("line", line)
 	imginf.saveI("sq",
 		drawsquare(gray,
 					image.Rect(200, 50, 400, 250),
 					2,
 					color.RGBA{255, 255, 0, 255}))
-	scaledimg := scaleImage(gray, 2)
-	nimg := hogVect(scaledimg)
-	imginf.saveI("hog", nimg)
-	hogVect(gray)
 	**************************************************************/
 }
 func grayscaleI(img image.Image) image.Image {
@@ -122,14 +117,18 @@ func (i *imageInfo) hogVect(img image.Image) image.Image {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(cell.Min, orientation, magnitude, imgcell)
+				c := uint8(xd + yd/2)
+				if c < 200 {
+					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.Black)
+				} else {
+					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.Gray{c})
+				}
 			}
 		}
-		//i.saveI(fmt.Sprintf("hogvect%d", k), imgcell)
 		draw.Draw(dst, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 		i.wg.Done()
 	}
-	fmt.Println("")
+	fmt.Print("\n")
 	return dst
 }
 func dividI(img image.Image, s int) []image.Rectangle {
@@ -137,7 +136,6 @@ func dividI(img image.Image, s int) []image.Rectangle {
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
 	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
-	//	draw.Draw(nimg, imgcell.Bounds(), imgcell, image.Pt(64, 64), draw.Over)
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
