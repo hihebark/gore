@@ -17,7 +17,7 @@ func gradientVector(x, y float64) (float64, float64) {
 	orientation := math.Mod((math.Atan2(x, y) * 180 / math.Pi), float64(360))
 	return magnitude, orientation
 }
-func drawLine(p image.Point, angle, length float64, img image.Image) *image.RGBA {
+func drawLine(p image.Point, angle, length float64, img image.RGBA) *image.RGBA {
 	mask, dst := image.NewRGBA(img.Bounds()), image.NewRGBA(img.Bounds())
 	x2 := math.Round(float64(p.X) + (length * math.Cos(angle)))
 	y2 := math.Round(float64(p.Y) + (length * math.Sin(angle)))
