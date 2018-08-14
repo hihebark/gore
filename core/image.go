@@ -110,19 +110,19 @@ func decode(i io.Reader) (image.Image, string) {
 
 func (i *imageInfo) hogVect(img image.Image) image.Image {
 	dst := image.NewRGBA(img.Bounds())
-	draw.Draw(dst, img.Bounds(), img, image.ZP, draw.Src)
+	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := dividI(img, 16)
 	fmt.Printf("[*] There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		i.wg.Add(1)
 		fmt.Printf("[!] Processing with %d cell\r", k)
-		var imgcell *image.RGBA = image.NewRGBA(img.Bounds())
+		var imgcell *image.RGBA = image.NewRGBA(cell)
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(cell.Max.Div(2), orientation, magnitude, imgcell)
+				imgcell = drawLine(cell.Min, orientation, magnitude, imgcell)
 			}
 		}
 		//i.saveI(fmt.Sprintf("hogvect%d", k), imgcell)

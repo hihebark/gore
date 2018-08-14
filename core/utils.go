@@ -12,12 +12,11 @@ func gradientVector(x, y float64) (float64, float64) {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
 	// magnitude   := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	// orientation := (math.Atan2(x, y) * 180 / math.Pi ) % 360
-
 	magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	orientation := math.Mod((math.Atan2(x, y) * 180 / math.Pi), float64(360))
 	return magnitude, orientation
 }
-func drawLine(p image.Point, angle, length float64, img image.RGBA) *image.RGBA {
+func drawLine(p image.Point, angle, length float64, img image.Image) *image.RGBA {
 	mask, dst := image.NewRGBA(img.Bounds()), image.NewRGBA(img.Bounds())
 	x2 := math.Round(float64(p.X) + (length * math.Cos(angle)))
 	y2 := math.Round(float64(p.Y) + (length * math.Sin(angle)))
@@ -26,8 +25,8 @@ func drawLine(p image.Point, angle, length float64, img image.RGBA) *image.RGBA 
 	for x := p.X; x <= int(x2); x++ {
 		mask.Set(x, int(slop*float64(x))+b, color.White)
 	}
-	draw.Draw(dst, img.Bounds(), img, image.ZP, draw.Src)
-	draw.Draw(dst, mask.Bounds(), mask, image.ZP, draw.Over)
+	draw.Draw(dst, img.Bounds(), img, img.Bounds().Min, draw.Src)
+	draw.Draw(dst, mask.Bounds(), mask, img.Bounds().Min, draw.Over)
 	return dst
 }
 
