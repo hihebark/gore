@@ -11,6 +11,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
 )
 
 type pixel struct {
@@ -20,6 +21,8 @@ type pixel struct {
 	A int
 }
 type imageInfo struct {
+	wg sync.WaitGroup
+	sync.RWMutex
 	format   string
 	name     string
 	bounds   image.Rectangle
@@ -28,6 +31,7 @@ type imageInfo struct {
 
 func newImageInfo(f, n string, b image.Rectangle, s int) *imageInfo {
 	return &imageInfo{
+		wg:       sync.WaitGroup{},
 		format:   f,
 		name:     n,
 		bounds:   b,
@@ -49,7 +53,8 @@ func Start(path string) {
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
 	imginf.saveI("grayscaled", gray)
-	imginf.saveI("lines", hogVect(scaleImage(gray, 2)))
+	imginf.saveI("lines", imginf.hogVect(scaleImage(gray, 2)))
+	imginf.wg.Wait()
 	/*************************************************************
 	line := drawLine(image.Pt(5, 5), 44.88743476267866, 10, gray)
 	imginf.saveI("line", line)
@@ -103,31 +108,29 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
-func hogVect(img image.Image) image.Image {
-	//dstimg := newImage(img.Bounds(), color.RGBA{0, 0, 0, 255})
-	dstimg := image.NewRGBA(img.Bounds())
-	draw.Draw(dstimg, img.Bounds(), img, image.ZP, draw.Src)
+func (i *imageInfo) hogVect(img image.Image) image.Image {
+	dst := image.NewRGBA(img.Bounds())
+	draw.Draw(dst, img.Bounds(), img, image.ZP, draw.Src)
 	cells := dividI(img, 16)
 	fmt.Printf("[*] There is %d cells\n", len(cells)-1)
-	//	fmt.Printf("%v\n", cells)
 	for k, cell := range cells {
-		//fmt.Printf("[!] Processing with %d cell\r", k)
-		imgcell := newImage(cell, color.RGBA{0, 0, 0, 255})
+		i.wg.Add(1)
+		fmt.Printf("[!] Processing with %d cell\r", k)
+		var imgcell *image.RGBA = image.NewRGBA(img.Bounds())
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(cell.Min.Div(2), orientation, magnitude, imgcell)
+				imgcell = drawLine(cell.Max.Div(2), orientation, magnitude, imgcell)
 			}
 		}
-		if imgcell.Bounds().Empty() {
-			fmt.Printf("%d Empty.\n", k)
-		}
-		draw.Draw(dstimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
+		//i.saveI(fmt.Sprintf("hogvect%d", k), imgcell)
+		draw.Draw(dst, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
+		i.wg.Done()
 	}
 	fmt.Println("")
-	return dstimg
+	return dst
 }
 func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
