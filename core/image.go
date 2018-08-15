@@ -111,17 +111,17 @@ func (i *imageInfo) hogVect(img image.Image) image.Image {
 	for k, cell := range cells {
 		i.wg.Add(1)
 		fmt.Printf("[!] Processing with %d cell\r", k)
-		var imgcell *image.RGBA = image.NewRGBA(cell)
+		imgcell := image.NewRGBA(cell)
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
 				c := uint8(xd + yd/2)
-				if c < 200 {
+				if c < 125 {
 					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.Black)
 				} else {
-					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.Gray{c})
+					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.White)
 				}
 			}
 		}
