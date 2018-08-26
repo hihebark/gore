@@ -38,8 +38,8 @@ func drawLine(p image.Point, angle, length float64, img image.Image, c color.Col
 }
 
 func scaleImage(img image.Image, size int) image.Image {
-	rect := image.Rect(0, 0, img.Bounds().Max.X/size, img.Bounds().Max.Y/size)
-	dstimg := image.NewGray(rect)
+	rect := image.Rect(0, 0, int(img.Bounds().Max.X), int(img.Bounds().Max.Y/size))
+	dstimg = image.NewRGBA(rect)
 	draw.ApproxBiLinear.Scale(dstimg, rect, img, img.Bounds(), draw.Over, nil)
 	return dstimg
 }
@@ -47,12 +47,4 @@ func newImage(r image.Rectangle, c color.Color) image.Image {
 	nimg := image.NewRGBA(r)
 	draw.Draw(nimg, nimg.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
 	return nimg
-}
-func drawCellinImage(imgs image.Image, imgd *image.RGBA, p image.Point) *image.RGBA {
-	//nimgd := image.NewRGBA(imgd.Bounds())
-	//draw.Copy(nimgd, image.ZP, imgd, nimgd.Bounds(), draw.Src, nil)
-	//draw.Copy(imgd, p, imgs, imgs.Bounds(), draw.Over, nil)
-	//draw.Draw(nimgd, nimgd.Bounds(), imgd, image.ZP, draw.Src)
-	draw.Draw(imgd, image.Rect(p.X, p.Y, imgs.Bounds().Max.X, imgs.Bounds().Max.Y), imgs, p, draw.Over)
-	return imgd
 }
