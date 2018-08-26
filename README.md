@@ -11,7 +11,11 @@ Result:
 -------
 #### NOT YET
 Not done yet but hope to get into this result.
-<p align="center"><img src="GoreProject.png" width="500"></p>
+<p align="center"><img src="GoreProject.png" width="400"></p>
+
+#### Usage:
+
+`go run main.go -img data/image.png`
 
 Steps:
 ------
@@ -19,6 +23,7 @@ Steps:
 - [x] Grayscal the image.
 - [x] Draw square.
 - [x] Divid the image into 16*16 cells.
+- [x] HOG implementation.
 - [ ] Find face.
 - [x] Output the image surrounding the face(s) with rectangle box. (almost)
 - [ ] Analyze the face.
