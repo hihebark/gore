@@ -26,16 +26,18 @@ type imageInfo struct {
 	format   string
 	name     string
 	bounds   image.Rectangle
-	sizescal int
+	scalsize int
+	cellsize int
 }
 
-func newImageInfo(f, n string, b image.Rectangle, s int) *imageInfo {
+func newImageInfo(f, n string, b image.Rectangle, s, c int) *imageInfo {
 	return &imageInfo{
 		wg:       sync.WaitGroup{},
 		format:   f,
 		name:     n,
 		bounds:   b,
-		sizescal: s,
+		scalsize: s,
+		cellsize: c,
 	}
 }
 
@@ -50,10 +52,10 @@ func Start(path string) {
 	info, _ := img.Stat()
 	name := strings.Split(info.Name(), ".")[0]
 	imgdec, form := decode(img)
-	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
+	imginf := newImageInfo(form, name, imgdec.Bounds(), 2, 16)
 	gray := grayscaleI(imgdec)
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
-	imginf.saveI("HOG", imginf.hogVect(scaleImage(gray, 2)))
+	imginf.saveI("HOG", imginf.hogVect(gray))
 	imginf.wg.Wait()
 
 	/*************************************************************
@@ -106,7 +108,9 @@ func decode(i io.Reader) (image.Image, string) {
 func (i *imageInfo) hogVect(img image.Image) image.Image {
 	dst := image.NewRGBA(img.Bounds())
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
-	cells := dividI(img, 16)
+	cells := dividI(img, i.cellsize)
+	midcell := image.Pt(int(i.cellsize/2), int(i.cellsize/2))
+	c := color.RGBA{0xff, 0xff, 0xff, 0x88}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		i.wg.Add(1)
@@ -117,7 +121,7 @@ func (i *imageInfo) hogVect(img image.Image) image.Image {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				imgcell = drawLine(cell.Sub(image.Pt(8, 8)).Max, orientation, magnitude, imgcell, color.White)
+				imgcell = drawLine(cell.Sub(midcell).Max, orientation, magnitude, imgcell, c)
 			}
 
 		}
