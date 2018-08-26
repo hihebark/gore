@@ -53,7 +53,7 @@ func Start(path string) {
 	imginf := newImageInfo(form, name, imgdec.Bounds(), 2)
 	gray := grayscaleI(imgdec)
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
-	imginf.saveI("HOG", imginf.hogVect(gray))
+	imginf.saveI("HOG", imginf.hogVect(scaleImage(gray, 2)))
 	imginf.wg.Wait()
 
 	/*************************************************************
@@ -65,7 +65,7 @@ func Start(path string) {
 	**************************************************************/
 }
 func grayscaleI(img image.Image) image.Image {
-	fmt.Printf("[*] Grascaling image ...\n")
+	fmt.Printf("+ Grascaling image ...\n")
 	if img.ColorModel() == color.GrayModel {
 		return img
 	}
@@ -85,7 +85,7 @@ func (i *imageInfo) saveI(name string, img image.Image) {
 		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
 	}
 	defer out.Close()
-	fmt.Printf("[*] Saving %s-%s.gore.%s\n", name, i.name, i.format)
+	fmt.Printf("+ Saving %s-%s.gore.%s\n", name, i.name, i.format)
 	switch i.format {
 	case "png":
 		png.Encode(out, img)
@@ -107,23 +107,19 @@ func (i *imageInfo) hogVect(img image.Image) image.Image {
 	dst := image.NewRGBA(img.Bounds())
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := dividI(img, 16)
-	fmt.Printf("[*] There is %d cells\n", len(cells)-1)
+	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		i.wg.Add(1)
-		fmt.Printf("[!] Processing with %d cell\r", k)
+		fmt.Printf("- Processing with %d cell\r", k)
 		imgcell := image.NewRGBA(cell)
 		for y := cell.Min.Y; y < cell.Max.Y; y++ {
 			for x := cell.Min.X; x < cell.Max.X; x++ {
 				yd := math.Abs(float64(img.At(x, y-1).(color.Gray).Y - img.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(img.At(x-1, y).(color.Gray).Y - img.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := gradientVector(xd, yd)
-				c := uint8(xd + yd/2)
-				if c < 125 {
-					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.Black)
-				} else {
-					imgcell = drawLine(cell.Min, orientation, magnitude, imgcell, color.White)
-				}
+				imgcell = drawLine(cell.Sub(image.Pt(8, 8)).Max, orientation, magnitude, imgcell, color.White)
 			}
+
 		}
 		draw.Draw(dst, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 		i.wg.Done()
@@ -135,7 +131,7 @@ func dividI(img image.Image, s int) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
 	w, h, i := bounds.Max.X, bounds.Max.Y, 0
-	cells := make([]image.Rectangle, int(w*h/(s*s))+1) // TODO not sure if it's correcte to verify later.
+	cells := make([]image.Rectangle, int(w*h/(s*s)+1)) // TODO not sure if it's correcte to verify later.
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
