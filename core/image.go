@@ -91,7 +91,7 @@ func (i *imageInfo) saveI(name string, img image.Image) {
 	switch i.format {
 	case "png":
 		png.Encode(out, img)
-	case "jpg":
+	case "jpg", "jpeg":
 		jpeg.Encode(out, img, nil)
 	}
 }
@@ -110,7 +110,7 @@ func (i *imageInfo) hogVect(img image.Image) image.Image {
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := dividI(img, i.cellsize)
 	midcell := image.Pt(int(i.cellsize/2), int(i.cellsize/2))
-	c := color.RGBA{0xff, 0xff, 0xff, 0x88}
+	c := color.RGBA{0xff, 0xff, 0xff, 0xbb}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		i.wg.Add(1)
