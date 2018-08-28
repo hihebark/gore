@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/image/draw"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -10,17 +9,15 @@ import (
 	"io"
 	"math"
 	"os"
-	"strings"
 	"sync"
+
+	"golang.org/x/image/draw"
 )
 
 type pixel struct {
-	R int
-	G int
-	B int
-	A int
+	R, G, B, A int
 }
-type imageInfo struct {
+type ImageInfo struct {
 	wg sync.WaitGroup
 	sync.RWMutex
 	format   string
@@ -30,8 +27,8 @@ type imageInfo struct {
 	cellsize int
 }
 
-func newImageInfo(f, n string, b image.Rectangle, s, c int) *imageInfo {
-	return &imageInfo{
+func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
+	return &ImageInfo{
 		wg:       sync.WaitGroup{},
 		format:   f,
 		name:     n,
@@ -41,32 +38,8 @@ func newImageInfo(f, n string, b image.Rectangle, s, c int) *imageInfo {
 	}
 }
 
-//Start detecting face in image given.
-func Start(path string) {
-	img, err := os.Open(path)
-	defer img.Close()
-	if err != nil {
-		fmt.Printf("image:start:os.Open path:%s\n", path)
-	}
-
-	info, _ := img.Stat()
-	name := strings.Split(info.Name(), ".")[0]
-	imgdec, form := decode(img)
-	imginf := newImageInfo(form, name, imgdec.Bounds(), 2, 16)
-	gray := grayscaleI(imgdec)
-	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
-	imginf.saveI("HOG", imginf.hogVect(gray))
-	imginf.wg.Wait()
-
-	/*************************************************************
-	imginf.saveI("sq",
-		drawsquare(gray,
-					image.Rect(200, 50, 400, 250),
-					2,
-					color.RGBA{255, 255, 0, 255}))
-	**************************************************************/
-}
-func grayscaleI(img image.Image) image.Image {
+//Gray scale image
+func (i *ImageInfo) Grayscale(img image.Image) image.Image {
 	fmt.Printf("+ Grascaling image ...\n")
 	if img.ColorModel() == color.GrayModel {
 		return img
@@ -81,7 +54,9 @@ func grayscaleI(img image.Image) image.Image {
 	}
 	return gray
 }
-func (i *imageInfo) saveI(name string, img image.Image) {
+
+//Save save image into directory
+func (i *ImageInfo) Save(name string, img image.Image) {
 	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.name, i.format))
 	if err != nil {
 		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
@@ -105,7 +80,8 @@ func decode(i io.Reader) (image.Image, string) {
 	return img, f
 }
 
-func (i *imageInfo) hogVect(img image.Image) image.Image {
+//HogVect hog implementation.
+func (i *ImageInfo) HogVect(img image.Image) image.Image {
 	dst := image.NewRGBA(img.Bounds())
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := dividI(img, i.cellsize)
