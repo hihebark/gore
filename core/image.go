@@ -84,7 +84,7 @@ func decode(i io.Reader) (image.Image, string) {
 func (i *ImageInfo) HogVect(img image.Image) image.Image {
 	dst := image.NewRGBA(img.Bounds())
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
-	cells := dividI(img, i.cellsize)
+	cells := i.divid(img)
 	midcell := image.Pt(int(i.cellsize/2), int(i.cellsize/2))
 	c := color.RGBA{0xff, 0xff, 0xff, 0xbb}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
@@ -107,16 +107,17 @@ func (i *ImageInfo) HogVect(img image.Image) image.Image {
 	fmt.Print("\n")
 	return dst
 }
-func dividI(img image.Image, s int) []image.Rectangle {
+func (i *ImageInfo) divid(img image.Image) []image.Rectangle {
 	//divid img to 16x16 cells
 	bounds := img.Bounds()
-	w, h, i := bounds.Max.X, bounds.Max.Y, 0
+	w, h, c := bounds.Max.X, bounds.Max.Y, 0
+	s := i.cellsize
 	cells := make([]image.Rectangle, int(w*h/(s*s)+1)) // TODO not sure if it's correcte to verify later.
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
-			cells[i] = image.Rect(v-s, z-s, x, y)
-			i++
+			cells[c] = image.Rect(v-s, z-s, x, y)
+			c++
 		}
 	}
 	return cells
