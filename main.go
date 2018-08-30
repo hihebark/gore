@@ -38,8 +38,8 @@ func main() {
 		fmt.Printf("error while decoding image: %v\n", err)
 		panic("Decode")
 	}
-	i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 16)
-	gray := i.Grayscale(imgdec)
+	i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 15)
+	gray := i.Grayscale(i.Scale(imgdec))
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
 	i.Save("hog", i.HogVect(gray))
 	//i.wg.Wait()

@@ -71,6 +71,14 @@ func (i *ImageInfo) Save(name string, img image.Image) {
 	}
 }
 
+//Scale reduce image into i.scalsize defind in ImageInfo
+func (i *ImageInfo) Scale(img image.Image) image.Image {
+	fmt.Printf("+ Scale image into %d\n", i.scalsize)
+	rect := image.Rect(0, 0, int(img.Bounds().Max.X/i.scalsize), int(img.Bounds().Max.Y/i.scalsize))
+	dstimg := image.NewRGBA(rect)
+	draw.ApproxBiLinear.Scale(dstimg, rect, img, img.Bounds(), draw.Over, nil)
+	return dstimg
+}
 func decode(i io.Reader) (image.Image, string) {
 	img, f, err := image.Decode(i)
 	if err != nil {
@@ -86,7 +94,7 @@ func (i *ImageInfo) HogVect(img image.Image) image.Image {
 	draw.Draw(dst, img.Bounds(), &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := i.divid(img)
 	midcell := image.Pt(int(i.cellsize/2), int(i.cellsize/2))
-	c := color.RGBA{0xff, 0xff, 0xff, 0xbb}
+	c := color.RGBA{0xff, 0xff, 0xff, 0xee}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		i.wg.Add(1)
