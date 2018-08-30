@@ -30,12 +30,6 @@ func drawLine(p image.Point, angle, length float64, img image.Image, c color.Col
 	return dst
 }
 
-func scaleImage(img image.Image, size int) image.Image {
-	rect := image.Rect(0, 0, int(img.Bounds().Max.X), int(img.Bounds().Max.Y/size))
-	dstimg := image.NewRGBA(rect)
-	draw.ApproxBiLinear.Scale(dstimg, rect, img, img.Bounds(), draw.Over, nil)
-	return dstimg
-}
 func newImage(r image.Rectangle, c color.Color) image.Image {
 	nimg := image.NewRGBA(r)
 	draw.Draw(nimg, nimg.Bounds(), &image.Uniform{c}, image.ZP, draw.Src)
