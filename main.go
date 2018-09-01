@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/hihebark/gore/core"
+	"github.com/hihebark/gore/models"
 )
 
 var path *string
@@ -23,7 +24,6 @@ func main() {
 	if *path == "" {
 		flag.PrintDefaults()
 		os.Exit(2)
-		//core.Start(*img)
 	}
 	img, err := os.Open(*path)
 	defer img.Close()
@@ -39,9 +39,9 @@ func main() {
 		panic("Decode")
 	}
 	i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 15)
-	gray := i.Grayscale(i.Scale(imgdec))
+	gray := i.Grayscale(imgdec)
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
-	i.Save("hog", i.HogVect(gray))
-	//i.wg.Wait()
+	i.Save("hog", model.HogVect(gray, i))
+	i.Wg.Wait()
 
 }

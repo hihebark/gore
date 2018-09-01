@@ -8,13 +8,16 @@ import (
 	"golang.org/x/image/draw"
 )
 
-func gradientVector(x, y float64) (float64, float64) {
+//GradientVector Computing The Gradient Image and return the magnitude and orientation.
+func GradientVector(x, y float64) (float64, float64) {
 	// http://mccormickml.com/2013/05/07/gradient-vectors/
 	magnitude := math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 	orientation := math.Mod((math.Atan2(x, y) * 180 / math.Pi), float64(360))
 	return magnitude, orientation
 }
-func drawLine(p image.Point, angle, length float64, img image.Image, c color.Color) *image.RGBA {
+
+//DrawLine draw a line in image.
+func DrawLine(p image.Point, angle, length float64, img image.Image, c color.Color) *image.RGBA {
 	bounds := img.Bounds()
 	mask, dst := image.NewRGBA(bounds), image.NewRGBA(bounds)
 	x2 := math.Round(float64(p.X) + (length * math.Cos(angle)))
