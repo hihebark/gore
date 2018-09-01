@@ -16,6 +16,8 @@ import (
 type pixel struct {
 	R, G, B, A int
 }
+
+//ImageInfo image information.
 type ImageInfo struct {
 	Wg sync.WaitGroup
 	sync.RWMutex
@@ -26,6 +28,7 @@ type ImageInfo struct {
 	Cellsize int
 }
 
+//NewImageInfo return ImageInfo struct.
 func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
 	return &ImageInfo{
 		Wg:       sync.WaitGroup{},
@@ -38,24 +41,24 @@ func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
 }
 
 //Gray scale image
-func (i *ImageInfo) Grayscale(img image.Image) image.Image {
+func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 	fmt.Printf("+ Grascaling image ...\n")
-	if img.ColorModel() == color.GrayModel {
-		return img
+	if imgsrc.ColorModel() == color.GrayModel {
+		return imgsrc
 	}
-	bounds := img.Bounds()
+	bounds := imgsrc.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 	gray := image.NewGray(bounds)
 	for x := 0; x < w; x++ {
 		for y := 0; y < h; y++ {
-			gray.Set(x, y, color.GrayModel.Convert(img.At(x, y)))
+			gray.Set(x, y, color.GrayModel.Convert(imgsrc.At(x, y)))
 		}
 	}
 	return gray
 }
 
 //Save save image into directory
-func (i *ImageInfo) Save(name string, img image.Image) {
+func (i *ImageInfo) Save(name string, imgsrc image.Image) {
 	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.Name, i.Format))
 	if err != nil {
 		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
@@ -64,20 +67,22 @@ func (i *ImageInfo) Save(name string, img image.Image) {
 	fmt.Printf("+ Saving %s-%s.gore.%s\n", name, i.Name, i.Format)
 	switch i.Format {
 	case "png":
-		png.Encode(out, img)
+		png.Encode(out, imgsrc)
 	case "jpg", "jpeg":
-		jpeg.Encode(out, img, nil)
+		jpeg.Encode(out, imgsrc, nil)
 	}
 }
 
-//Scale reduce image into i.scalsize defind in ImageInfo
-func (i *ImageInfo) Scale(img image.Image) image.Image {
+//Scale reduce image into i.scalsize defind in ImageInfo.
+func (i *ImageInfo) Scale(imgsrc image.Image) image.Image {
 	fmt.Printf("+ Scale image into %d\n", i.Scalsize)
-	rect := image.Rect(0, 0, int(img.Bounds().Max.X/i.Scalsize), int(img.Bounds().Max.Y/i.Scalsize))
+	bound := imgsrc.Bounds()
+	rect := image.Rect(0, 0, int(bound.Max.X/i.Scalsize), int(bound.Max.Y/i.Scalsize))
 	dstimg := image.NewRGBA(rect)
-	draw.ApproxBiLinear.Scale(dstimg, rect, img, img.Bounds(), draw.Over, nil)
+	draw.ApproxBiLinear.Scale(dstimg, rect, imgsrc, imgsrc.Bounds(), draw.Over, nil)
 	return dstimg
 }
+
 func decode(i io.Reader) (image.Image, string) {
 	img, f, err := image.Decode(i)
 	if err != nil {
@@ -86,9 +91,9 @@ func decode(i io.Reader) (image.Image, string) {
 	}
 	return img, f
 }
-func Divid(img image.Image, s int) []image.Rectangle {
-	//divid img to 16x16 cells
-	bounds := img.Bounds()
+
+//Divid split rectangle into s*s rectangles.
+func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	w, h, c := bounds.Max.X, bounds.Max.Y, 0
 	cells := make([]image.Rectangle, int(w*h/(s*s)+1))
 	for y := 16; y < h; y += s {
@@ -100,6 +105,7 @@ func Divid(img image.Image, s int) []image.Rectangle {
 	}
 	return cells
 }
+
 func getPixels(i io.Reader) ([][]pixel, error) {
 	img, format, err := image.Decode(i)
 	if err != nil {

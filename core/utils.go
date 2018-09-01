@@ -17,8 +17,8 @@ func GradientVector(x, y float64) (float64, float64) {
 }
 
 //DrawLine draw a line in image.
-func DrawLine(p image.Point, angle, length float64, img image.Image, c color.Color) *image.RGBA {
-	bounds := img.Bounds()
+func DrawLine(p image.Point, angle, length float64, imgsrc image.Image, c color.Color) *image.RGBA {
+	bounds := imgsrc.Bounds()
 	mask, dstimg := image.NewRGBA(bounds), image.NewRGBA(bounds)
 	x2 := math.Round(float64(p.X) + (length * math.Cos(angle)))
 	y2 := math.Round(float64(p.Y) + (length * math.Sin(angle)))
@@ -28,7 +28,7 @@ func DrawLine(p image.Point, angle, length float64, img image.Image, c color.Col
 	for x := int(x2m); x <= int(x2); x++ {
 		mask.Set(x, int(slop*float64(x))+b, c)
 	}
-	draw.Draw(dstimg, img.Bounds(), img, bounds.Min, draw.Src)
+	draw.Draw(dstimg, imgsrc.Bounds(), imgsrc, bounds.Min, draw.Src)
 	draw.Draw(dstimg, mask.Bounds(), mask, bounds.Min, draw.Over)
 	return dstimg
 }
