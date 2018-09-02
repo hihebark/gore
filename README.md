@@ -12,9 +12,11 @@ Result
 #### Almost Done
 Not done yet but hope to get into this result.
 <p align="center"><img src="GoreProject.png" width="400"></p>
+
 #### Result so far!
 using HOG implementation.
 <p align="center"><img src="face-hog.png" width="400"></p>
+
 #### Usage
 
 `go run main.go -img data/image.png`
