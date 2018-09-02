@@ -13,10 +13,6 @@ import (
 	"golang.org/x/image/draw"
 )
 
-type pixel struct {
-	R, G, B, A int
-}
-
 //ImageInfo image information.
 type ImageInfo struct {
 	Wg sync.WaitGroup
@@ -95,7 +91,7 @@ func decode(i io.Reader) (image.Image, string) {
 //Divid split rectangle into s*s rectangles.
 func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	w, h, c := bounds.Max.X, bounds.Max.Y, 0
-	cells := make([]image.Rectangle, int(w*h/(s*s)+1))
+	cells := make([]image.Rectangle, int(w/s*h/s))
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
@@ -106,6 +102,10 @@ func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	return cells
 }
 
+/************************************************************************
+type pixel struct {
+	R, G, B, A int
+}
 func getPixels(i io.Reader) ([][]pixel, error) {
 	img, format, err := image.Decode(i)
 	if err != nil {
@@ -127,3 +127,4 @@ func getPixels(i io.Reader) ([][]pixel, error) {
 func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) pixel {
 	return pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
 }
+************************************************************************/
