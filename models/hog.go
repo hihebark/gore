@@ -20,6 +20,10 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 	c := color.RGBA{0xff, 0xff, 0xff, 0xee}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
+		if cells[k] == image.ZR {
+			fmt.Printf("\n* Cell out of bound with: %d cell(s)", len(cells)-k)
+			break
+		}
 		i.Wg.Add(1)
 		fmt.Printf("- Processing with %d cell\r", k)
 		imgcell := image.NewRGBA(cell)

@@ -11,15 +11,21 @@ import (
 	"github.com/hihebark/gore/models"
 )
 
-var path *string
+const MAXSIZE int = 600
+
+var (
+	path  *string
+	scale *int
+)
 
 func init() {
 	path = flag.String("p", "", "Path to the image.")
+	scale = flag.Int("s", 2, "Scale image into the given s.")
 }
 
 func main() {
-	fmt.Printf(" ┏ ┳ ┓\n ┣ o ┫\n ┗ ┻ ┛\n")
-	fmt.Println(" Gore - 0.0.0")
+	fmt.Printf("  ┏ ┳ ┓\n  ┣ o ┫\n  ┗ ┻ ┛\n")
+	fmt.Println("  Gore - 0.0.1")
 	flag.Parse()
 	if *path == "" {
 		flag.PrintDefaults()
@@ -38,7 +44,10 @@ func main() {
 		fmt.Printf("error while decoding image: %v\n", err)
 		panic("Decode")
 	}
-	i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 17)
+	i := core.NewImageInfo(format, name, imgdec.Bounds(), *scale, 17)
+	if imgdec.Bounds().Max.X > MAXSIZE {
+		imgdec = i.Scale(imgdec)
+	}
 	gray := i.Grayscale(imgdec)
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
 	i.Save("hog", model.HogVect(gray, i))
