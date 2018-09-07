@@ -91,7 +91,7 @@ func decode(i io.Reader) (image.Image, string) {
 //Divid split rectangle into s*s cell.
 func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	w, h, c := bounds.Max.X, bounds.Max.Y, 0
-	cells := make([]image.Rectangle, int(w/s*h/s))
+	cells := make([]image.Rectangle) //, int(w/s*h/s))
 	for y := 16; y < h; y += s {
 		for x := 16; x < w; x += s {
 			v, z := x, y
