@@ -21,6 +21,21 @@ using HOG implementation.
 
 `go run main.go -img data/image.png`
 
+##### Output
+
+```
+
+  ┏ ┳ ┓
+  ┣ o ┫
+  ┗ ┻ ┛
+  Gore - 0.0.1
+Usage of ./gore:
+  -p string
+        Path to the image.
+  -s int
+        Scale image into the given s. (default 2)
+
+```
 
 Steps
 ------
