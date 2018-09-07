@@ -9,7 +9,8 @@ import (
 	"golang.org/x/image/draw"
 )
 
-func drawsquare(img image.Image, r image.Rectangle, density int, c color.Color) image.Image {
+//DrawSquare to draw squareline in a given image.
+func DrawSquare(img image.Image, r image.Rectangle, density int, c color.Color) image.Image {
 	nimg := image.NewRGBA(img.Bounds())
 	draw.Draw(nimg, nimg.Bounds(), img, image.ZP, draw.Src)
 	for y := r.Min.Y; y <= r.Max.Y; y++ {
@@ -28,7 +29,7 @@ func drawsquareI(img image.Image, p image.Point) image.Image {
 	maski, err := os.Open("data/squarebox.png")
 	defer maski.Close()
 	if err != nil {
-		fmt.Printf("image:drawsquareI:os.Open\n")
+		fmt.Printf("image:drawsquareI:drawsquareIos.Open\n")
 	}
 	mask, _ := decode(maski)
 	dstimg := image.NewRGBA(img.Bounds())

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"image/color"
 	"os"
 	"strings"
 
@@ -60,6 +61,12 @@ func main() {
 	imgmodel, _, _ := image.Decode(imgm)
 	points := core.DetectFace(imghog, imgmodel)
 	fmt.Printf("Points: %v\n", points)
+	c := color.RGBA{255, 255, 0, 255}
+	//imgrect := image.NewRGBA(imgdec.Bounds())
+	for _, p := range points {
+		imgdec = core.DrawSquare(imgdec, p.Rect, 1, c)
+	}
+	i.Save("Square", imgdec)
 	i.Wg.Wait()
 
 }
