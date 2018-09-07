@@ -50,7 +50,16 @@ func main() {
 	}
 	gray := i.Grayscale(imgdec)
 	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
-	i.Save("hog", model.HogVect(gray, i))
+	imghog := model.HogVect(gray, i)
+	i.Save("hog", imghog)
+	imgm, err := os.Open("data/fhog.png")
+	defer imgm.Close()
+	if err != nil {
+		fmt.Printf("image:os.Open path:%s\n", path)
+	}
+	imgmodel, _, _ := image.Decode(imgm)
+	points := core.DetectFace(imghog, imgmodel)
+	fmt.Printf("Points: %v\n", points)
 	i.Wg.Wait()
 
 }

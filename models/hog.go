@@ -21,7 +21,7 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
 		if cells[k] == image.ZR {
-			fmt.Printf("\n* Cell out of bound with: %d cell(s)", len(cells)-k)
+			fmt.Printf("\n! Cell out of bound with: %d cell(s)", len(cells)-k)
 			break
 		}
 		i.Wg.Add(1)

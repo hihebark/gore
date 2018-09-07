@@ -19,7 +19,7 @@ func (b bypercent) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
 
 //DetectFace if found.
 func DetectFace(imgsrc, imgmodel image.Image) []points {
-	fmt.Printf("+ Detecting for face(s)...\n")
+	fmt.Printf("+ Detecting face(s)...\n")
 	bmodel, bsrc := imgmodel.Bounds(), imgsrc.Bounds()
 	pts := []points{} //make(map[image.Point]float64)
 	for ys := bsrc.Min.Y; ys < bsrc.Max.Y; ys++ {
