@@ -50,7 +50,6 @@ func main() {
 		imgdec = i.Scale(imgdec)
 	}
 	gray := i.Grayscale(imgdec)
-	//imginf.saveI("SquareBox", drawsquareI(gray, image.Pt(200, 50)))
 	imghog := model.HogVect(gray, i)
 	i.Save("hog", imghog)
 	imgm, err := os.Open("data/fhog.png")
@@ -62,7 +61,6 @@ func main() {
 	points := core.DetectFace(imghog, imgmodel)
 	fmt.Printf("Points: %v\n", points)
 	c := color.RGBA{255, 255, 0, 255}
-	//imgrect := image.NewRGBA(imgdec.Bounds())
 	for _, p := range points {
 		imgdec = core.DrawSquare(imgdec, p.Rect, 1, c)
 	}
