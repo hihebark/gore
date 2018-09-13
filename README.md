@@ -37,4 +37,6 @@ Usage of ./gore:
 
 ```
 
-<p align="center"><i>Made with </i>■ <i>pixel's by Hihebark</i></p>
+---
+
+<p align="center"><i>Made with </i>■ <i>by <b>hihebark</b></i></p>
