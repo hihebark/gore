@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"image/color"
 	"os"
 	"strings"
 
@@ -52,8 +51,6 @@ func main() {
 	gray := i.Grayscale(imgdec)
 	imghog := model.HogVect(gray, i)
 	i.Save("hog", imghog)
-	imgm, err := os.Open("data/fhog.png")
-	defer imgm.Close()
 	if err != nil {
 		fmt.Printf("image:os.Open path:%s\n", path)
 	}
