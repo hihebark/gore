@@ -11,7 +11,7 @@ import (
 	"github.com/hihebark/gore/models"
 )
 
-const MAXSIZE int = 600
+const MAXSIZEX int = 600
 
 var (
 	path  *string
@@ -45,7 +45,7 @@ func main() {
 		panic("Decode")
 	}
 	i := core.NewImageInfo(format, name, imgdec.Bounds(), *scale, 17)
-	if imgdec.Bounds().Max.X > MAXSIZE {
+	if imgdec.Bounds().Max.X > MAXSIZEX {
 		imgdec = i.Scale(imgdec)
 	}
 	gray := i.Grayscale(imgdec)

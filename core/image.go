@@ -101,30 +101,3 @@ func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	}
 	return cells
 }
-
-/************************************************************************
-type pixel struct {
-	R, G, B, A int
-}
-func getPixels(i io.Reader) ([][]pixel, error) {
-	img, format, err := image.Decode(i)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Printf("image Format: %s\n", format)
-	bounds := img.Bounds()
-	width, height := bounds.Max.X, bounds.Max.Y
-	var pixels [][]pixel
-	for y := 0; y < height; y++ {
-		var row []pixel
-		for x := 0; x < width; x++ {
-			row = append(row, rgbaToPixel(img.At(x, y).RGBA()))
-		}
-		pixels = append(pixels, row)
-	}
-	return pixels, nil
-}
-func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) pixel {
-	return pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
-}
-************************************************************************/

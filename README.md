@@ -19,9 +19,9 @@ using HOG implementation.
 
 #### Usage
 
-`go run main.go -img data/image.png`
+`./gore -h`
 
-##### Output
+##### Usage
 
 ```
 
@@ -34,6 +34,22 @@ Usage of ./gore:
         Path to the image.
   -s int
         Scale image into the given s. (default 2)
+
+```
+
+##### Example
+
+```
+$ ./gore -p data/face.jpg
+  ┏ ┳ ┓                                    
+  ┣ o ┫
+  ┗ ┻ ┛
+  Gore - 0.0.1
++ Grascaling image ...
++ There is 422 cells
+- Processing with 413 cell
+! Cell out of bound with: 9 cell(s)
++ Saving hog-face.gore.jpeg
 
 ```
 
