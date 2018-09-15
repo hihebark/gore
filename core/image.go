@@ -36,7 +36,7 @@ func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
 	}
 }
 
-//Gray scale image
+//Grayscale gray scale image
 func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 	fmt.Printf("+ Grascaling image ...\n")
 	if imgsrc.ColorModel() == color.GrayModel {

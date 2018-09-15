@@ -4,6 +4,7 @@ import (
 	"math"
 )
 
+//Useful const
 const (
 	FULLCIRCLE float64 = 360
 	HALFCIRCLE float64 = 180
@@ -24,4 +25,10 @@ func xFromAngle(x, length int, angle float64) float64 {
 }
 func yFromAngle(y, length int, angle float64) float63 {
 	return math.Round(float64(p.Y) + (length * math.Sin(angle)))
+}
+
+//Gaussian formula.
+// formula G(x, y) = (1/2PI*sigma^2)(exp(-x^2+y^2/2sigma^2))
+func Gaussian(x, y int, sigma float64) float64 {
+	return math.Exp(-(x*x+y*y)/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
 }
