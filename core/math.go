@@ -21,14 +21,14 @@ func Orientation(x, y float64) float64 {
 }
 
 func xFromAngle(x, length int, angle float64) float64 {
-	return math.Round(float64(x) + (length * math.Cos(angle)))
+	return math.Round(float64(x) + (float64(length) * math.Cos(angle)))
 }
-func yFromAngle(y, length int, angle float64) float63 {
-	return math.Round(float64(p.Y) + (length * math.Sin(angle)))
+func yFromAngle(y, length int, angle float64) float64 {
+	return math.Round(float64(y) + (float64(length) * math.Sin(angle)))
 }
 
 //Gaussian formula.
 // formula G(x, y) = (1/2PI*sigma^2)(exp(-x^2+y^2/2sigma^2))
 func Gaussian(x, y int, sigma float64) float64 {
-	return math.Exp(-(x*x+y*y)/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
+	return math.Exp(float64(-(x*x+y*y))/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
 }

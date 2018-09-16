@@ -48,20 +48,23 @@ func main() {
 	if imgdec.Bounds().Max.X > maxsizex {
 		imgdec = i.Scale(imgdec)
 	}
-	gray := i.Grayscale(imgdec)
-	imghog := model.HogVect(gray, i)
-	i.Save("hog", imghog)
-	if err != nil {
-		fmt.Printf("image:os.Open path:%s\n", path)
-	}
-	imgmodel, _, _ := image.Decode(imgm)
-	points := core.DetectFace(imghog, imgmodel)
-	fmt.Printf("Points: %v\n", points)
-	c := color.RGBA{255, 255, 0, 255}
-	for _, p := range points {
-		imgdec = core.DrawSquare(imgdec, p.Rect, 1, c)
-	}
-	i.Save("Square", imgdec)
+	i.Save("blur", model.Salience(imgdec, 1, 1))
+	/*
+		gray := i.Grayscale(imgdec)
+		imghog := model.HogVect(gray, i)
+		i.Save("hog", imghog)
+		if err != nil {
+			fmt.Printf("image:os.Open path:%s\n", path)
+		}
+		imgmodel, _, _ := image.Decode(imgm)
+		points := core.DetectFace(imghog, imgmodel)
+		fmt.Printf("Points: %v\n", points)
+		c := color.RGBA{255, 255, 0, 255}
+		for _, p := range points {
+			imgdec = core.DrawSquare(imgdec, p.Rect, 1, c)
+		+= imgsrc.At(kx, ky).RGBA()
+		i.Save("Square", imgdec)
+	*/
 	i.Wg.Wait()
 
 }

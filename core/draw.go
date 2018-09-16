@@ -28,9 +28,9 @@ func DrawSquare(img image.Image, r image.Rectangle, density int, c color.Color) 
 func DrawLine(p image.Point, angle, length float64, imgsrc image.Image, c color.Color) *image.RGBA {
 	bound := imgsrc.Bounds()
 	dstimg, mask := image.NewRGBA(bound), image.NewRGBA(bound)
-	x1 := xFromAngle(p.X, length, angle)
-	y1 := yFromAngle(p.Y, lenght, angle)
-	x2 := xFromAngle(p.X, length, angle+180)
+	x1 := xFromAngle(p.X, int(length), angle)
+	y1 := yFromAngle(p.Y, int(length), angle)
+	x2 := xFromAngle(p.X, int(length), angle+180)
 	a := (x1 - float64(p.X)) / (y1 - float64(p.Y))
 	b := int(float64(p.Y) - a*float64(p.X))
 	s, e := x2, x1
