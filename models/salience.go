@@ -12,7 +12,34 @@ import (
 //Salience output salience image.
 func Salience(imgsrc image.Image, kernel, radius int) image.Image {
 	fmt.Printf("+ Calculating Salience map: \n")
-	return gaussianBlur(imgsrc, kernel, radius)
+	return blur(imgsrc, 1.0)
+	//return gaussianBlur(imgsrc, kernel, radius)
+}
+func blur(imgsrc image.Image, radius float64) image.Image {
+	maxY, maxX := imgsrc.Bounds().Max.Y, imgsrc.Bounds().Max.X
+	imgdst := image.NewRGBA(imgsrc.Bounds())
+	for y := 0; y < maxY; y++ {
+		for x := 0; x < maxX; x++ {
+			var r, g, b, a uint32 = 0, 0, 0, 0
+
+			for ky := -radius; ky < radius; ky++ {
+				for kx := -radius; kx <= radius; kx++ {
+					kr, kg, kb, ka := imgsrc.At(x+int(kx), y+int(ky)).RGBA()
+					r += kr
+					g += kg
+					b += kb
+					a += ka
+				}
+			}
+			r += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
+			g += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
+			b += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
+			a += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
+			c := color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+			imgdst.Set(x, y, c)
+		}
+	}
+	return imgsrc
 }
 
 func gaussianBlur(imgsrc image.Image, kernel, radius int) image.Image {
