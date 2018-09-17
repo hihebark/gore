@@ -12,6 +12,10 @@ For more thechnique i dide use those documentation:
   * [HOG Person Detector Tutorial](http://mccormickml.com/2013/05/09/hog-person-detector-tutorial/)
   * [Gradient Vectors](http://mccormickml.com/2013/05/07/gradient-vectors/)
 * Saliency map [Saliency - Wiki](https://en.wikipedia.org/wiki/Saliency_map):
+  * RGB -> CIELab
+  * Features: Intensity, Color, Orientation
+  * Wavelet pyramid: Intensity, Color, Orientation
+  * Conspicuity: Intensity, Color, Orientation
 
 ##### Result so far
 * Using HOG implementation.

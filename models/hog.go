@@ -17,6 +17,7 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 	draw.Draw(hogimg, bound, &image.Uniform{color.Black}, image.ZP, draw.Src)
 	cells := core.Divid(bound, i.Cellsize)
 	midcell := image.Pt(int(i.Cellsize/2)+1, int(i.Cellsize/2)+1)
+	vect := int(i.Cellsize / 2)
 	c := color.White //color.RGBA{0xff, 0xff, 0xff, 0xff}
 	fmt.Printf("+ There is %d cells\n", len(cells)-1)
 	for k, cell := range cells {
@@ -33,7 +34,7 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 				xd := math.Abs(float64(imgsrc.At(x-1, y).(color.Gray).Y - imgsrc.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := core.Magnitude(xd, yd), core.Orientation(xd, yd)
 				if int(magnitude)%16 == 0 {
-					imgcell = core.DrawLine(cell.Sub(midcell).Max, orientation, 7, imgcell, c)
+					imgcell = core.DrawLine(cell.Sub(midcell).Max, orientation, int(cell.Max.X/2), imgcell, c)
 				}
 			}
 
