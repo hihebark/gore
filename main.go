@@ -48,7 +48,7 @@ func main() {
 	if imgdec.Bounds().Max.X > maxsizex {
 		imgdec = i.Scale(imgdec)
 	}
-	i.Save("blur", model.Salience(imgdec, 1, 1))
+	i.Save("blur", model.Salience(imgdec, 3, 1))
 	/*
 		gray := i.Grayscale(imgdec)
 		imghog := model.HogVect(gray, i)
