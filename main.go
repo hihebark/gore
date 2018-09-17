@@ -4,11 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"image/color"
 	"os"
 	"strings"
 
 	"github.com/hihebark/gore/core"
-	"github.com/hihebark/gore/models"
+	_ "github.com/hihebark/gore/models"
 )
 
 const maxsizex int = 600
@@ -34,7 +35,7 @@ func main() {
 	img, err := os.Open(*path)
 	defer img.Close()
 	if err != nil {
-		fmt.Printf("image:os.Open path:%s\n", path)
+		fmt.Printf("image:os.Open path:%s\n", *path)
 	}
 
 	info, _ := img.Stat()
@@ -48,7 +49,10 @@ func main() {
 	if imgdec.Bounds().Max.X > maxsizex {
 		imgdec = i.Scale(imgdec)
 	}
-	i.Save("blur", model.Salience(imgdec, 3, 1))
+	gray := i.Grayscale(imgdec)
+	i.Save("gray", gray)
+	fmt.Printf("%v\n", core.RGBAtoXYZ(color.RGBA{255, 255, 0, 255}))
+	//i.Save("blur", model.Salience(imgdec, 3, 1))
 	/*
 		gray := i.Grayscale(imgdec)
 		imghog := model.HogVect(gray, i)

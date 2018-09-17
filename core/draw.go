@@ -25,7 +25,7 @@ func DrawSquare(img image.Image, r image.Rectangle, density int, c color.Color) 
 }
 
 //DrawLine draw a line in image.
-func DrawLine(p image.Point, angle, length float64, imgsrc image.Image, c color.Color) *image.RGBA {
+func DrawLine(p image.Point, angle float64, length int, imgsrc image.Image, c color.Color) *image.RGBA {
 	bound := imgsrc.Bounds()
 	dstimg, mask := image.NewRGBA(bound), image.NewRGBA(bound)
 	x1 := xFromAngle(p.X, int(length), angle)

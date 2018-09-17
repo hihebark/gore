@@ -36,6 +36,12 @@ func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
 	}
 }
 
+type XYZ struct {
+	X float64
+	Y float64
+	Z float64
+}
+
 //Grayscale gray scale image
 func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 	fmt.Printf("+ Grascaling image ...\n")
@@ -165,7 +171,7 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 	for i := 0; i < l; i++ {
 		row := make([]float64, l)
 		for j := 0; j < l; j++ {
-			g := core.Gaussian(i, j, sigma)
+			g := Gaussian(i, j, sigma)
 			row[j] = g
 			sum += g
 		}
@@ -177,4 +183,30 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 		}
 	}
 	return kernel
+}
+
+//RGBAtoXYZ source: http://cs.haifa.ac.il/hagit/courses/ist/Lectures/Demos/ColorApplet2/t_convert.html
+func RGBAtoXYZ(rgba color.RGBA) XYZ {
+	xyzvalue := [3][3]float64{
+		{0.5767309, 0.1855540, 0.1881852},
+		{0.2973769, 0.6273491, 0.0752741},
+		{0.0270343, 0.0706872, 0.9911085},
+		//{3.240479, -1.537150, -0.498535},
+		//{-0.969256, 1.875992, 0.041556},
+		//{0.055648, -0.204043, 1.057311},
+	}
+	xyz := XYZ{0, 0, 0}
+	for _, v := range xyzvalue {
+		xyz.X += float64(rgba.R) * v[0]
+		xyz.Y += float64(rgba.G) * v[0]
+		xyz.Z += float64(rgba.B) * v[0]
+	}
+	xyz.X /= 95.047
+	xyz.Y /= 100.0
+	xyz.Z /= 108.883
+	return xyz
+}
+
+func RGBAtoCieLAB(rgba color.RGBA) {
+	fmt.Printf("hello")
 }

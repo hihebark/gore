@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"image"
-	"image/color"
 
 	"github.com/hihebark/gore/core"
 )
