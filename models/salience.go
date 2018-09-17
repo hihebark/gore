@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	//"math"
 
 	"github.com/hihebark/gore/core"
 )
@@ -12,7 +11,6 @@ import (
 //Salience output salience image.
 func Salience(imgsrc image.Image, kernel, radius int) image.Image {
 	fmt.Printf("+ Calculating Salience map: \n")
-	//return blur(imgsrc, 1.0)
 	return gaussianBlur(imgsrc, kernel, radius)
 }
 func blur(imgsrc image.Image, radius float64) image.Image {
@@ -33,10 +31,6 @@ func blur(imgsrc image.Image, radius float64) image.Image {
 					count++
 				}
 			}
-			//r += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
-			//g += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
-			//b += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
-			//a += ((uint32(radius)*2 + 1) * (uint32(radius)*2 + 1))
 			c := color.RGBA{uint8(r/count) + 1, uint8(g/count) + 1, uint8(b/count) + 1, uint8(a / count)}
 			imgdst.Set(x, y, c)
 		}
