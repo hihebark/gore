@@ -51,7 +51,8 @@ func main() {
 	}
 	gray := i.Grayscale(imgdec)
 	i.Save("gray", gray)
-	fmt.Printf("%v\n", core.RGBAtoXYZ(color.RGBA{255, 255, 0, 255}))
+	rgb := core.RGBAtoRGB(color.RGBA{255, 0, 0, 128})
+	fmt.Printf("rgb: %v\t xyz: %v\n", rgb, core.RGBtoXYZ(rgb))
 	//i.Save("blur", model.Salience(imgdec, 3, 1))
 	/*
 		gray := i.Grayscale(imgdec)
