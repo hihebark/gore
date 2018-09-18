@@ -52,7 +52,9 @@ func main() {
 	gray := i.Grayscale(imgdec)
 	i.Save("gray", gray)
 	rgb := core.RGBAtoRGB(color.RGBA{255, 0, 0, 128})
-	fmt.Printf("rgb: %v\t xyz: %v\n", rgb, core.RGBtoXYZ(rgb))
+	xyz := core.RGBtoXYZ(rgb)
+	lab := core.XYZtoCieLAB(xyz)
+	fmt.Printf("rgb: %v\nxyz: %v\nlab:%v\n", rgb, xyz, lab)
 	//i.Save("blur", model.Salience(imgdec, 3, 1))
 	/*
 		gray := i.Grayscale(imgdec)
@@ -69,7 +71,6 @@ func main() {
 			imgdec = core.DrawSquare(imgdec, p.Rect, 1, c)
 		+= imgsrc.At(kx, ky).RGBA()
 		i.Save("Square", imgdec)
+		i.Wg.Wait()
 	*/
-	i.Wg.Wait()
-
 }

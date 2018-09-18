@@ -4,23 +4,17 @@ import "image/color"
 
 //RGB color without Alpha
 type RGB struct {
-	R float64
-	G float64
-	B float64
+	R, G, B float64
 }
 
 //XYZ is an additive color space based on how the eye intereprets stimulus from light.
 type XYZ struct {
-	X float64
-	Y float64
-	Z float64
+	X, Y, Z float64
 }
 
 //LAB is CieLab color
 type LAB struct {
-	L float64
-	A float64
-	B float64
+	L, A, B float64
 }
 
 //RGBAtoRGB convert rgba to rgb
@@ -46,11 +40,19 @@ func RGBtoXYZ(rgb RGB) XYZ {
 	xyz.Z = float64(r)*0.0193339 + float64(g)*0.1191921 + float64(b)*0.9503041
 	return xyz
 }
-func XYZtoCieLAB() LAB {
-	return LAB{0, 0, 0}
+
+//XYZtoCieLAB convert xyz to Cie*L*a*b
+//https://www.mathworks.com/help/images/ref/xyz2lab.html D65:[0.9504, 1.0000, 1.0888]
+func XYZtoCieLAB(xyz XYZ) LAB {
+	fx, fy, fz := xyz.X/0.9504, xyz.Y/1.0000, xyz.Y/1.0888
+	lab := LAB{}
+	lab.L = 1.16*Ft(fy) - 0.16
+	lab.A = 5.0 * Ft(fx-fy)
+	lab.B = 2.0 * Ft(fy-fz)
+	return lab
 }
 
 //RGBAtoCieLAB convert rgb to CieLAB
-func RGBAtoCieLAB(rgba color.RGBA) {
-	//fmt.Printf("hello")
+func RGBAtoCieLAB(rgba color.RGBA) LAB {
+	return XYZtoCieLAB(RGBtoXYZ(RGBAtoRGB(rgba)))
 }
