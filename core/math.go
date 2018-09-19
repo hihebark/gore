@@ -16,7 +16,7 @@ func Magnitude(x, y float64) float64 {
 	return math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 }
 
-// Orientation calculate orientation of two points f(x, y) = atan2(x, y) * 180 / 3.14 % 360
+// OrientationXY calculate orientation of two points f(x, y) = atan2(x, y) * 180 / 3.14 % 360
 func OrientationXY(x, y float64) float64 {
 	return math.Mod((math.Atan2(x, y) * HALFCIRCLE / math.Pi), FULLCIRCLE)
 }
@@ -33,6 +33,8 @@ func yFromAngle(y, length int, angle float64) float64 {
 func Gaussian(x, y int, sigma float64) float64 {
 	return math.Exp(float64(-(x*x+y*y))/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
 }
+
+//Ft function
 func Ft(t float64) float64 {
 	if t >= 0.008856 {
 		//return math.Cbrt(t)
@@ -46,7 +48,7 @@ func Intensity(rgb RGB) float64 {
 	return 0.226*rgb.R + 0.7152*rgb.G + 0.0722*rgb.B
 }
 
-// Orientation
+// Orientation not now
 func Orientation() {
 
 }

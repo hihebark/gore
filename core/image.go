@@ -102,14 +102,14 @@ func Divid(bounds image.Rectangle, s int) []image.Rectangle {
 	return cells
 }
 
-//Blure image.
+//Blur image.
 func Blur(imgsrc image.Image, radius float64) image.Image {
 	maxY, maxX := imgsrc.Bounds().Max.Y, imgsrc.Bounds().Max.X
 	imgdst := image.NewRGBA(imgsrc.Bounds())
 	for y := 0; y < maxY; y++ {
 		for x := 0; x < maxX; x++ {
 			var r, g, b, a uint32 = 0, 0, 0, 0
-			var count uint32 = 0
+			var count uint32
 
 			for ky := -radius; ky < radius; ky++ {
 				for kx := -radius; kx <= radius; kx++ {
@@ -159,7 +159,7 @@ func GaussianBlur(imgsrc image.Image, kernel, radius int) image.Image {
 }
 
 func gaussianMap(ks int, sigma float64) [][]float64 {
-	var sum float64 = 0.0
+	var sum float64
 	l := ks*2 + 1
 	kernel := make([][]float64, l)
 	for i := 0; i < l; i++ {
