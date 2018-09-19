@@ -11,7 +11,7 @@ For more thechnique i dide use those documentation:
   * [Machine Learning is Fun! Part 4: Modern Face Recognition with Deep Learning](https://medium.com/@ageitgey/machine-learning-is-fun-part-4-modern-face-recognition-with-deep-learning-c3cffc121d78)
   * [HOG Person Detector Tutorial](http://mccormickml.com/2013/05/09/hog-person-detector-tutorial/)
   * [Gradient Vectors](http://mccormickml.com/2013/05/07/gradient-vectors/)
-* Saliency map [Saliency - Wiki](https://en.wikipedia.org/wiki/Saliency_map):
+* Saliency map [Saliency - Wiki](https://en.wikipedia.org/wiki/Saliency_map) and based on Itti model [AN IMPROVED SALIENCY DETECTION ALGORITHM BASED ON ITTI’S MODEL](https://hrcak.srce.hr/file/193994):
   * RGB -> CIELab
   * Features: Intensity, Color, Orientation
   * Wavelet pyramid: Intensity, Color, Orientation
