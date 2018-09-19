@@ -17,7 +17,7 @@ type LAB struct {
 	L, A, B float64
 }
 
-//RGBAtoRGB convert rgba to rgb
+// RGBAtoRGB convert rgba to rgb with a black background.
 func RGBAtoRGB(rgba color.RGBA) RGB {
 	a := float64(rgba.A)
 	if a == 0 {
@@ -41,18 +41,19 @@ func RGBtoXYZ(rgb RGB) XYZ {
 	return xyz
 }
 
-//XYZtoCieLAB convert xyz to Cie*L*a*b
-//https://www.mathworks.com/help/images/ref/xyz2lab.html D65:[0.9504, 1.0000, 1.0888]
+// XYZtoCieLAB convert xyz to Cie*L*a*b
+// Reference: https://www.mathworks.com/help/images/ref/xyz2lab.html D65:[0.9504, 1.0000, 1.0888]
 func XYZtoCieLAB(xyz XYZ) LAB {
-	fx, fy, fz := xyz.X/0.9504, xyz.Y/1.0000, xyz.Y/1.0888
+	fx, fy, fz := xyz.X/95.0470, xyz.Y/100.0000, xyz.Y/108.8830
 	lab := LAB{}
-	lab.L = 1.16*Ft(fy) - 0.16
-	lab.A = 5.0 * Ft(fx-fy)
-	lab.B = 2.0 * Ft(fy-fz)
+	lab.L = 116*Ft(fy) - 0.16
+	lab.A = 500 * Ft(fx-fy)
+	lab.B = 200 * Ft(fy-fz)
 	return lab
 }
 
-//RGBAtoCieLAB convert rgb to CieLAB
+// RGBAtoCieLAB convert rgb to CieLAB
+// using https://hrcak.srce.hr/file/193994 page 3/8
 func RGBAtoCieLAB(rgba color.RGBA) LAB {
 	return XYZtoCieLAB(RGBtoXYZ(RGBAtoRGB(rgba)))
 }

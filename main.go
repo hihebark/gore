@@ -9,19 +9,19 @@ import (
 	"strings"
 
 	"github.com/hihebark/gore/core"
-	_ "github.com/hihebark/gore/models"
+	"github.com/hihebark/gore/models"
 )
 
 const maxsizex int = 600
 
 var (
-	path  *string
-	model *string
+	path   *string
+	models *string
 )
 
 func init() {
 	path = flag.String("p", "", "Path to the image.")
-	model = flag.String("model", "", "Model to use hog, sal, ...")
+	models = flag.String("model", "", "Model to use hog, sal, ...")
 
 }
 
@@ -30,7 +30,7 @@ func main() {
 	fmt.Println("  Gore - 0.0.1")
 	flag.Parse()
 	switch {
-	case *path != "" && *model != "":
+	case *path != "" && *models != "":
 		img, err := os.Open(*path)
 		defer img.Close()
 		if err != nil {
@@ -45,13 +45,13 @@ func main() {
 			panic("Decode")
 		}
 		i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 17)
-		switch *model {
+		switch *models {
 		case "hog":
 			gray := i.Grayscale(imgdec)
 			imghog := model.HogVect(gray, i)
-			i.Save("hog".imghog)
+			i.Save("hog", imghog)
 		case "sal":
-			imgsal := model.Salience(imgdec)
+			imgsal := model.Salience(imgdec, 3, 1)
 			i.Save("sal", imgsal)
 		}
 	case *path == "":

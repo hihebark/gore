@@ -5,7 +5,7 @@ package model
 //
 // Hog implematation of Histogram of oriented gradients.
 // Exemple:
-//		imghog := HogVect(imgsrc, ImageInfo{})
-//		i.Save("hog", imghog)
+//	// imghog := model.HogVect(imgsrc, core.ImageInfo{})
+//	// i.Save("hog", imghog)
 //
 // Saliency:

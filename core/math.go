@@ -34,8 +34,9 @@ func Gaussian(x, y int, sigma float64) float64 {
 	return math.Exp(float64(-(x*x+y*y))/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
 }
 func Ft(t float64) float64 {
-	if t > K*K*K {
-		return math.Cbrt(t)
+	if t >= 0.008856 {
+		//return math.Cbrt(t)
+		return math.Pow(t, 1/3)
 	}
-	return t/3*K*K + 4/29
+	return 7.787037*t + 0.13793
 }
