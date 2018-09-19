@@ -11,12 +11,14 @@ const (
 	K          float64 = 8
 )
 
-// Magnitude calculate the magnitude of two points f(x, y) = sqrt(c^2 + y^2)
+// Magnitude calculate the magnitude of two points
+//		f(x, y) = sqrt(c^2 + y^2)
 func Magnitude(x, y float64) float64 {
 	return math.Sqrt(math.Pow(x, 2) + math.Pow(y, 2))
 }
 
-// OrientationXY calculate orientation of two points f(x, y) = atan2(x, y) * 180 / 3.14 % 360
+// OrientationXY calculate orientation of two points
+//		f(x, y) = atan2(x, y) * 180 / 3.14 % 360
 func OrientationXY(x, y float64) float64 {
 	return math.Mod((math.Atan2(x, y) * HALFCIRCLE / math.Pi), FULLCIRCLE)
 }
@@ -29,7 +31,7 @@ func yFromAngle(y, length int, angle float64) float64 {
 }
 
 // Gaussian formula.
-//		//formula G(x, y) = (1/2PI*sigma^2)(exp(-x^2+y^2/2sigma^2))
+//		G(x, y) = (1/2PI*sigma^2)(exp(-x^2+y^2/2sigma^2))
 func Gaussian(x, y int, sigma float64) float64 {
 	return math.Exp(float64(-(x*x+y*y))/(2*sigma*sigma)) / (2 * math.Pi * sigma * sigma)
 }
@@ -54,16 +56,15 @@ func Orientation() {
 }
 
 // Gabor filter.
-//		// Gabor formula:
-//		// G(θ, λ, ϕ, σ, γ, x,y) = exp(x'^2+(y^2*y'^2)/2σ^2) * exp(i(2PI*x'/ γ + ϕ))
-//		// where
-//		//	x' = x*cosθ + y*sinθ
-//		//	y' = x*sinθ + y*cosθ
-//		//	σ = sigma of gaussian envelope
-//		//	γ = gamma spatial aspect ratio
-//		//	ϕ = phi phase offset
-//		//	θ = theta angle
-//		//	λ = lambda
+//		G(θ, λ, ϕ, σ, γ, x,y) = exp(x'^2+(y^2*y'^2)/2σ^2) * exp(i(2PI*x'/ γ + ϕ))
+//		where
+//			x' = x*cosθ + y*sinθ
+//			y' = x*sinθ + y*cosθ
+//			σ = sigma of gaussian envelope
+//			γ = gamma spatial aspect ratio
+//			ϕ = phi phase offset
+//			θ = theta angle
+//			λ = lambda
 func Gabor(x, y int) []float64 {
 	gamma := 1.0
 	sigma := math.Pi
