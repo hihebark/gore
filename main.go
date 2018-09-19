@@ -45,12 +45,15 @@ func main() {
 			panic("Decode")
 		}
 		i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 17)
-		if imgdec.Bounds().Max.X > maxsizex {
-			imgdec = i.Scale(imgdec)
+		switch *model {
+		case "hog":
+			gray := i.Grayscale(imgdec)
+			imghog := model.HogVect(gray, i)
+			i.Save("hog".imghog)
+		case "sal":
+			imgsal := model.Salience(imgdec)
+			i.Save("sal", imgsal)
 		}
-		gray := i.Grayscale(imgdec)
-		i.Save("gray", gray)
-		break
 	case *path == "":
 		rgb := core.RGBAtoRGB(color.RGBA{255, 0, 0, 128})
 		xyz := core.RGBtoXYZ(rgb)
