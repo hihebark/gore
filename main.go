@@ -59,7 +59,7 @@ func main() {
 		xyz := core.RGBtoXYZ(rgb)
 		lab := core.XYZtoCieLAB(xyz)
 		fmt.Printf("rgb: %v\nxyz: %v\nlab:%v\n", rgb, xyz, lab)
-		fmt.Printf("Gabor: %v\n", core.Gabor(10, 10, 50))
+		fmt.Printf("Gabor: %v\n", core.Gabor(10, 10, 3.14))
 	default:
 		flag.PrintDefaults()
 		os.Exit(2)

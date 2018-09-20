@@ -27,6 +27,7 @@ For more thechnique i dide use those documentation:
   * Features: Intensity, Color, Orientation
   * Wavelet pyramid: Intensity, Color, Orientation
   * Conspicuity: Intensity, Color, Orientation
+  * Gabor explanation: [Gabor filter for image processing and computer vision](http://matlabserver.cs.rug.nl/edgedetectionweb/web/edgedetection_params.html)
 
 ##### Result so far
 * Using HOG implementation.
