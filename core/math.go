@@ -65,7 +65,7 @@ func Orientation() {
 //			ϕ = phi phase offset
 //			θ = theta angle
 //			λ = lambda
-func Gabor(x, y int) []float64 {
+func Gabor(x, y, lambda int) []float64 {
 	gamma := 1.0
 	sigma := math.Pi
 	phi := .0
@@ -76,8 +76,8 @@ func Gabor(x, y int) []float64 {
 		xx := (float64(x)*math.Cos(theta) + float64(y)*math.Sin(theta))
 		yy := (float64(x)*math.Sin(theta) + float64(y)*math.Cos(theta))
 		yy = math.Pow(yy, 2)
-		gabor := math.Exp(math.Pow(xx, 2) + (yy*math.Pow(float64(y), 2))/math.Pow(2*sigma, 2))
-		gabor *= math.Exp(float64(i) * ((2.0 * math.Pi * xx / gamma) + phi))
+		gabor := math.Exp(math.Pow(xx, 2) + (yy*math.Pow(gamma, 2))/math.Pow(2*sigma, 2))
+		gabor *= math.Exp(float64(i) * ((2.0 * math.Pi * xx / float64(lambda)) + phi))
 		gabors[i] = gabor
 	}
 	return gabors
