@@ -72,12 +72,12 @@ func Intensity(rgb RGB) float64 {
 }
 func RGBtoRGBY(rgb RGB) RGBY {
 	r := rgb.R - (rgb.B+rgb.G)/2
-	r = rgbyCondition(r)
 	g := rgb.G - (rgb.B+rgb.R)/2
-	g = rgbyCondition(g)
 	b := rgb.B - (rgb.R+rgb.G)/2
+	y := -b - math.Abs(rgb.R-rgb.G)/2
+	r = rgbyCondition(r)
+	g = rgbyCondition(g)
 	b = rgbyCondition(b)
-	y := -rgb.B - math.Abs(rgb.R-rgb.G)/2
 	y = rgbyCondition(y)
 	return RGBY{r, g, b, y}
 }
