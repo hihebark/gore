@@ -45,12 +45,7 @@ func Ft(t float64) float64 {
 	return 7.787037*t + 0.13793
 }
 
-// Intensity equation to give the intensity of a pixel (RGB)
-func Intensity(rgb RGB) float64 {
-	return 0.226*rgb.R + 0.7152*rgb.G + 0.0722*rgb.B
-}
-
-// Orientation not now
+// Orientation working on it.
 func Orientation() {
 
 }
@@ -81,4 +76,10 @@ func Gabor(x, y int, lambda float64) []float64 {
 		gabors[i] = gabor
 	}
 	return gabors
+}
+func rgbyCondition(rgby float64) float64 {
+	if rgby < 0 {
+		return .0
+	}
+	return rgby
 }

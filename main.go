@@ -55,10 +55,13 @@ func main() {
 			i.Save("sal", imgsal)
 		}
 	case *path == "":
-		rgb := core.RGBAtoRGB(color.RGBA{255, 0, 0, 128})
+		c := color.RGBA{255, 0, 0, 255}
+		rgb := core.RGBAtoRGB(c)
 		xyz := core.RGBtoXYZ(rgb)
 		lab := core.XYZtoCieLAB(xyz)
 		fmt.Printf("rgb: %v\nxyz: %v\nlab:%v\n", rgb, xyz, lab)
+		fmt.Printf("rgby: %v\n", core.RGBtoRGBY(core.RGBAtoRGB(color.RGBA{255, 255, 100, 255})))
+		fmt.Printf("Intensity: %v\n", core.Intensity(core.RGBAtoRGB(c)))
 		fmt.Printf("Gabor: %v\n", core.Gabor(10, 10, 3.14))
 	default:
 		flag.PrintDefaults()

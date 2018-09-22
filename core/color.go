@@ -1,18 +1,26 @@
 package core
 
-import "image/color"
+import (
+	"image/color"
+	"math"
+)
 
-//RGB color without Alpha
+// RGB color without Alpha
 type RGB struct {
 	R, G, B float64
 }
 
-//XYZ is an additive color space based on how the eye intereprets stimulus from light.
+// RGBY
+type RGBY struct {
+	R, G, B, Y float64
+}
+
+// XYZ is an additive color space based on how the eye intereprets stimulus from light.
 type XYZ struct {
 	X, Y, Z float64
 }
 
-//LAB is CieLab color
+// LAB is CieLab color
 type LAB struct {
 	L, A, B float64
 }
@@ -56,4 +64,20 @@ func XYZtoCieLAB(xyz XYZ) LAB {
 // using https://hrcak.srce.hr/file/193994 page 3/8
 func RGBAtoCieLAB(rgba color.RGBA) LAB {
 	return XYZtoCieLAB(RGBtoXYZ(RGBAtoRGB(rgba)))
+}
+
+// Intensity equation to give the intensity of a pixel (RGB)
+func Intensity(rgb RGB) float64 {
+	return 0.226*rgb.R + 0.7152*rgb.G + 0.0722*rgb.B
+}
+func RGBtoRGBY(rgb RGB) RGBY {
+	r := rgb.R - (rgb.B+rgb.G)/2
+	r = rgbyCondition(r)
+	g := rgb.G - (rgb.B+rgb.R)/2
+	g = rgbyCondition(g)
+	b := rgb.B - (rgb.R+rgb.G)/2
+	b = rgbyCondition(b)
+	y := -rgb.B - math.Abs(rgb.R-rgb.G)/2
+	y = rgbyCondition(y)
+	return RGBY{r, g, b, y}
 }
