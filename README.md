@@ -54,7 +54,7 @@ Usage of ./gore:
 
 ```
 $ ./gore -p data/face.jpg
-  ┏ ┳ ┓                                    
+  ┏ ┳ ┓
   ┣ o ┫
   ┗ ┻ ┛
   Gore - 0.0.1

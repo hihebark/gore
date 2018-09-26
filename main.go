@@ -67,10 +67,4 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
-	//i.Save("blur", model.Salience(imgdec, 3, 1))
-	/*
-		gray := i.Grayscale(imgdec)
-		imghog := model.HogVect(gray, i)
-		i.Save("hog", imghog)
-	*/
 }
