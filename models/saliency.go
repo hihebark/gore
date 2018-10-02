@@ -12,7 +12,7 @@ import (
 func Salience(imgsrc image.Image, kernel, radius int) image.Image {
 	fmt.Printf("+ Calculating Salience map: \n")
 	//intensityFeatures()
-	return core.RedImage(imgsrc)
+	return core.RGBChannel(imgsrc, "blue")
 	//return core.GaussianBlur(imgsrc, kernel, radius)
 }
 
@@ -26,4 +26,10 @@ func colourFeature() {
 }
 func orientationFeatures() {
 	fmt.Printf("- Extracting orientation features from image\n")
+}
+func rgbyCondition(rgby float64) float64 {
+	if rgby < 0 {
+		return .0
+	}
+	return rgby
 }

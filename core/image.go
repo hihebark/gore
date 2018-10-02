@@ -181,13 +181,21 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 	}
 	return kernel
 }
-func RedImage(imgsrc image.Image) image.Image {
+func RGBChannel(imgsrc image.Image, channel string) image.Image {
 	maxX, maxY := imgsrc.Bounds().Max.X, imgsrc.Bounds().Max.Y
 	imgdst := image.NewRGBA(imgsrc.Bounds())
 	for y := 0; y <= maxY; y++ {
 		for x := 0; x <= maxX; x++ {
-			red, _, _, _ := imgsrc.At(x, y).RGBA()
-			imgdst.Set(x, y, color.RGBA{uint8(red), 0, 0, 255})
+			r, g, b := uint32(0), uint32(0), uint32(0)
+			switch channel {
+			case "red":
+				r, _, _, _ = imgsrc.At(x, y).RGBA()
+			case "green":
+				_, g, _, _ = imgsrc.At(x, y).RGBA()
+			case "blue":
+				_, _, b, _ = imgsrc.At(x, y).RGBA()
+			}
+			imgdst.Set(x, y, color.RGBA{uint8(r), uint8(g), uint8(b), 255})
 		}
 	}
 	return imgdst
