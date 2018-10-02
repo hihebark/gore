@@ -139,9 +139,12 @@ func GaussianBlur(imgsrc image.Image, kernel, radius int) image.Image {
 	for y := 0; y < maxY; y++ {
 		for x := 0; x < maxX; x++ {
 			var r, g, b, a uint16
-
-			for ky := -kernel; ky < kernel; ky++ {
-				for kx := -kernel; kx < kernel; kx++ {
+			k := -kernel
+			if x == 0 || y == 0 {
+				k = 0
+			}
+			for ky := -k; ky < kernel; ky++ {
+				for kx := -k; kx < kernel; kx++ {
 					kr, kg, kb, ka := imgsrc.At(x+kx, y+ky).RGBA()
 					r += uint16(float64(kr) * kernels[kernel+kx][kernel+ky])
 					g += uint16(float64(kg) * kernels[kernel+kx][kernel+ky])

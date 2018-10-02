@@ -10,7 +10,7 @@ type RGB struct {
 	R, G, B float64
 }
 
-// RGBY
+// RGBY Red, Green, Blue and Yellow color
 type RGBY struct {
 	R, G, B, Y float64
 }
@@ -31,11 +31,11 @@ func RGBAtoRGB(rgba color.RGBA) RGB {
 	if a == 0 {
 		return RGB{0, 0, 0}
 	}
-	rgb := RGB{}
-	rgb.R = ((255-a)*255 + a*float64(rgba.R)) / 255
-	rgb.G = ((255-a)*255 + a*float64(rgba.G)) / 255
-	rgb.B = ((255-a)*255 + a*float64(rgba.B)) / 255
-	return rgb
+	return RGB{
+		((255-a)*255 + a*float64(rgba.R)) / 255,
+		((255-a)*255 + a*float64(rgba.G)) / 255,
+		((255-a)*255 + a*float64(rgba.B)) / 255,
+	}
 }
 
 // RGBtoXYZ convert rgb to xyz.
@@ -50,14 +50,15 @@ func RGBtoXYZ(rgb RGB) XYZ {
 }
 
 // XYZtoCieLAB convert xyz to Cie*L*a*b
-// Reference: https://www.mathworks.com/help/images/ref/xyz2lab.html D65:[0.9504, 1.0000, 1.0888]
+// Reference: https://www.mathworks.com/help/images/ref/xyz2lab.html
+// using D65:[0.9504, 1.0000, 1.0888]
 func XYZtoCieLAB(xyz XYZ) LAB {
 	fx, fy, fz := xyz.X/95.0470, xyz.Y/100.0000, xyz.Y/108.8830
-	lab := LAB{}
-	lab.L = 116*Ft(fy) - 0.16
-	lab.A = 500 * Ft(fx-fy)
-	lab.B = 200 * Ft(fy-fz)
-	return lab
+	return LAB{
+		L: 116*Ft(fy) - 0.16,
+		A: 500 * Ft(fx-fy),
+		B: 200 * Ft(fy-fz),
+	}
 }
 
 // RGBAtoCieLAB convert rgb to CieLAB
@@ -70,14 +71,14 @@ func RGBAtoCieLAB(rgba color.RGBA) LAB {
 func Intensity(rgb RGB) float64 {
 	return 0.226*rgb.R + 0.7152*rgb.G + 0.0722*rgb.B
 }
+
+// RGBtoRGBY Convert RGB to Red, Green, Blue and Yellow
 func RGBtoRGBY(rgb RGB) RGBY {
-	r := rgb.R - (rgb.B+rgb.G)/2
-	g := rgb.G - (rgb.B+rgb.R)/2
 	b := rgb.B - (rgb.R+rgb.G)/2
-	y := -b - math.Abs(rgb.R-rgb.G)/2
-	r = rgbyCondition(r)
-	g = rgbyCondition(g)
-	b = rgbyCondition(b)
-	y = rgbyCondition(y)
-	return RGBY{r, g, b, y}
+	return RGBY{
+		rgbyCondition(rgb.R - (rgb.B+rgb.G)/2),
+		rgbyCondition(rgb.G - (rgb.B+rgb.R)/2),
+		rgbyCondition(b),
+		rgbyCondition(-b - math.Abs(rgb.R-rgb.G)/2),
+	}
 }
