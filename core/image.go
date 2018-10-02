@@ -181,3 +181,14 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 	}
 	return kernel
 }
+func RedImage(imgsrc image.Image) image.Image {
+	maxX, maxY := imgsrc.Bounds().Max.X, imgsrc.Bounds().Max.Y
+	imgdst := image.NewRGBA(imgsrc.Bounds())
+	for y := 0; y <= maxY; y++ {
+		for x := 0; x <= maxX; x++ {
+			red, _, _, _ := imgsrc.At(x, y).RGBA()
+			imgdst.Set(x, y, color.RGBA{uint8(red), 0, 0, 255})
+		}
+	}
+	return imgdst
+}

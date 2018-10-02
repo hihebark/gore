@@ -77,9 +77,3 @@ func Gabor(x, y int, lambda float64) []float64 {
 	}
 	return gabors
 }
-func rgbyCondition(rgby float64) float64 {
-	if rgby < 0 {
-		return .0
-	}
-	return rgby
-}

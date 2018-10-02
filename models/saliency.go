@@ -11,8 +11,9 @@ import (
 //Salience output salience image.
 func Salience(imgsrc image.Image, kernel, radius int) image.Image {
 	fmt.Printf("+ Calculating Salience map: \n")
-	intensityFeatures()
-	return core.GaussianBlur(imgsrc, kernel, radius)
+	//intensityFeatures()
+	return core.RedImage(imgsrc)
+	//return core.GaussianBlur(imgsrc, kernel, radius)
 }
 
 func intensityFeatures() {

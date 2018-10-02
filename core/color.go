@@ -82,3 +82,9 @@ func RGBtoRGBY(rgb RGB) RGBY {
 		rgbyCondition(-b - math.Abs(rgb.R-rgb.G)/2),
 	}
 }
+func rgbyCondition(rgby float64) float64 {
+	if rgby < 0 {
+		return .0
+	}
+	return rgby
+}
