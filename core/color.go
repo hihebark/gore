@@ -5,25 +5,27 @@ import (
 	"math"
 )
 
-// RGB color without Alpha
-type RGB struct {
-	R, G, B float64
-}
+type (
+	// RGB color without Alpha
+	RGB struct {
+		R, G, B float64
+	}
 
-// RGBY Red, Green, Blue and Yellow color
-type RGBY struct {
-	R, G, B, Y float64
-}
+	// RGBY Red, Green, Blue and Yellow color
+	RGBY struct {
+		R, G, B, Y float64
+	}
 
-// XYZ is an additive color space based on how the eye intereprets stimulus from light.
-type XYZ struct {
-	X, Y, Z float64
-}
+	// XYZ is an additive color space based on how the eye intereprets stimulus from light.
+	XYZ struct {
+		X, Y, Z float64
+	}
 
-// LAB is CieLab color
-type LAB struct {
-	L, A, B float64
-}
+	// LAB is CieLab color
+	LAB struct {
+		L, A, B float64
+	}
+)
 
 // RGBAtoRGB convert rgba to rgb with a black background.
 func RGBAtoRGB(rgba color.RGBA) RGB {
@@ -41,12 +43,12 @@ func RGBAtoRGB(rgba color.RGBA) RGB {
 // RGBtoXYZ convert rgb to xyz.
 // source sRGB to XYZ: http://cs.haifa.ac.il/hagit/courses/ist/Lectures/Demos/ColorApplet2/t_convert.html
 func RGBtoXYZ(rgb RGB) XYZ {
-	xyz := XYZ{}
 	r, g, b := rgb.R, rgb.G, rgb.B
-	xyz.X = float64(r)*0.4124564 + float64(g)*0.3575761 + float64(b)*0.1804375
-	xyz.Y = float64(r)*0.2126729 + float64(g)*0.7151521 + float64(b)*0.0721750
-	xyz.Z = float64(r)*0.0193339 + float64(g)*0.1191921 + float64(b)*0.9503041
-	return xyz
+	return XYZ{
+		float64(r)*0.4124564 + float64(g)*0.3575761 + float64(b)*0.1804375,
+		float64(r)*0.2126729 + float64(g)*0.7151521 + float64(b)*0.0721750,
+		float64(r)*0.0193339 + float64(g)*0.1191921 + float64(b)*0.9503041,
+	}
 }
 
 // XYZtoCieLAB convert xyz to Cie*L*a*b
@@ -70,6 +72,11 @@ func RGBAtoCieLAB(rgba color.RGBA) LAB {
 // Intensity equation to give the intensity of a pixel (RGB)
 func Intensity(rgb RGB) float64 {
 	return 0.226*rgb.R + 0.7152*rgb.G + 0.0722*rgb.B
+}
+
+// Intensityrgb equation to give the intensity of a pixel (RGB)
+func Intensityrgb(rgb RGB) (uint8, uint8, uint8) {
+	return uint8(0.226 * rgb.R), uint8(0.7152 * rgb.G), uint8(0.0722 * rgb.B)
 }
 
 // RGBtoRGBY Convert RGB to Red, Green, Blue and Yellow
