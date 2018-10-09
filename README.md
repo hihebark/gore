@@ -9,7 +9,7 @@
         <img src="https://img.shields.io/aur/license/yaourt.svg" alt="license">
     </a>
 </p>
-<p align="center"><img src="logo.jpg" width="500"></p>
+<p align="center"><img src="logo.png" width="600"></p>
 
 gore
 =====
