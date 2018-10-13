@@ -52,7 +52,9 @@ func main() {
 			i.Save("hog", imghog)
 		case "sal":
 			imgsal := model.Salience(imgdec, 3, 1)
-			i.Save("sal", imgsal)
+			for k, v := range imgsal {
+				i.Save(fmt.Sprintf("sal-%d", k), v)
+			}
 		}
 	case *path == "":
 		c := color.RGBA{255, 0, 0, 255}
