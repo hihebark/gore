@@ -51,9 +51,9 @@ func main() {
 			imghog := model.HogVect(gray, i)
 			i.Save("hog", imghog)
 		case "sal":
-			imgsal := model.Salience(imgdec, 3, 1)
-			for k, v := range imgsal {
-				i.Save(fmt.Sprintf("sal-%d", k), v)
+			imgs := model.Salience(imgdec, 3, 1)
+			for _, v := range imgs {
+				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Img)
 			}
 		}
 	case *path == "":

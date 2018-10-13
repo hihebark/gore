@@ -8,15 +8,10 @@ import (
 	"github.com/hihebark/gore/core"
 )
 
-type sal struct {
-	img  image.image
-	name string
-}
-
 //Salience output salience image.
-func Salience(imgsrc image.Image, kernel, radius int) []image.Image {
+func Salience(imgsrc image.Image, kernel, radius int) []core.Images {
 	fmt.Printf("+ Calculating Salience map: \n")
-	return []image.Image{intensityFeatures(imgsrc)}
+	return []core.Images{core.Images{intensityFeatures(imgsrc), "intensity"}}
 	//return core.RGBChannel(imgsrc, "blue")
 	//return core.GaussianBlur(imgsrc, kernel, radius)
 }
