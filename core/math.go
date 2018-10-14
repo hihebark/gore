@@ -39,7 +39,6 @@ func Gaussian(x, y int, sigma float64) float64 {
 //Ft function
 func Ft(t float64) float64 {
 	if t >= 0.008856 {
-		//return math.Cbrt(t)
 		return math.Pow(t, 1/3)
 	}
 	return 7.787037*t + 0.13793
@@ -55,11 +54,11 @@ func Orientation() {
 //		where
 //			x' = x*cosθ + y*sinθ
 //			y' = x*sinθ + y*cosθ
-//			σ = sigma of gaussian envelope	= Pi
-//			γ = gamma spatial aspect ratio	= 1
-//			ϕ = phi phase offset			= 0
-//			θ = theta angle					= i*Pi/K
-//			λ = lambda						> 0.2*img
+//			σ  = sigma of gaussian envelope	= Pi
+//			γ  = gamma spatial aspect ratio	= 1
+//			ϕ  = phi phase offset			= 0
+//			θ  = theta angle				= i*Pi/K
+//			λ  = lambda						> 0.2*img
 func Gabor(x, y int, lambda float64) []float64 {
 	gamma := 1.0
 	sigma := math.Pi

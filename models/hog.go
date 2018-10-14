@@ -33,7 +33,7 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 				yd := math.Abs(float64(imgsrc.At(x, y-1).(color.Gray).Y - imgsrc.At(x, y+1).(color.Gray).Y))
 				xd := math.Abs(float64(imgsrc.At(x-1, y).(color.Gray).Y - imgsrc.At(x+1, y).(color.Gray).Y))
 				magnitude, orientation := core.Magnitude(xd, yd), core.OrientationXY(xd, yd)
-				if int(magnitude)%16 == 0 {
+				if int(magnitude)%16 == 0 { // useful i supose so!
 					imgcell = core.DrawLine(cell.Sub(midcell).Max, orientation, vect, imgcell, c)
 				}
 			}
@@ -42,6 +42,6 @@ func HogVect(imgsrc image.Image, i *core.ImageInfo) image.Image {
 		draw.Draw(hogimg, imgcell.Bounds(), imgcell, cell.Min, draw.Over)
 		i.Wg.Done()
 	}
-	fmt.Print("\n")
+	fmt.Printf("\n")
 	return hogimg
 }

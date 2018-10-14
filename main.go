@@ -36,7 +36,6 @@ func main() {
 		if err != nil {
 			fmt.Printf("image:os.Open path:%s\n", *path)
 		}
-
 		info, _ := img.Stat()
 		name := strings.Split(info.Name(), ".")[0]
 		imgdec, format, err := image.Decode(img)
