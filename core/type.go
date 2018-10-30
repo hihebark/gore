@@ -2,7 +2,7 @@ package core
 
 import "image"
 
-type Images struct {
-	Img  image.Image
-	Name string
+type Img struct {
+	Image image.Image
+	Name  string
 }

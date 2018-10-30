@@ -9,9 +9,9 @@ import (
 )
 
 //Salience output salience image.
-func Salience(imgsrc image.Image, kernel, radius int) []core.Images {
+func Salience(imgsrc image.Image, kernel, radius int) []core.Img {
 	fmt.Printf("+ Calculating Salience map: \n")
-	return []core.Images{core.Images{intensityFeatures(imgsrc), "intensity"}}
+	return []core.Img{core.Img{intensityFeatures(imgsrc), "intensity"}}
 	//return core.RGBChannel(imgsrc, "blue")
 	//return core.GaussianBlur(imgsrc, kernel, radius)
 }

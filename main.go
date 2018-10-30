@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/hihebark/gore/core"
+	"github.com/hihebark/gore/log"
 	"github.com/hihebark/gore/models"
 )
 
@@ -34,13 +35,13 @@ func main() {
 		img, err := os.Open(*path)
 		defer img.Close()
 		if err != nil {
-			fmt.Printf("image:os.Open path:%s\n", *path)
+			log.Err("image:os.Open path: %v", *path)
 		}
 		info, _ := img.Stat()
 		name := strings.Split(info.Name(), ".")[0]
 		imgdec, format, err := image.Decode(img)
 		if err != nil {
-			fmt.Printf("error while decoding image: %v\n", err)
+			log.Err("error while decoding image: %v", err)
 			panic("Decode")
 		}
 		i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 17)
@@ -52,7 +53,7 @@ func main() {
 		case "sal":
 			imgs := model.Salience(imgdec, 3, 1)
 			for _, v := range imgs {
-				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Img)
+				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Image)
 			}
 		}
 	case *path == "":
@@ -60,10 +61,10 @@ func main() {
 		rgb := core.RGBAtoRGB(c)
 		xyz := core.RGBtoXYZ(rgb)
 		lab := core.XYZtoCieLAB(xyz)
-		fmt.Printf("rgb: %v\nxyz: %v\nlab:%v\n", rgb, xyz, lab)
-		fmt.Printf("rgby: %v\n", core.RGBtoRGBY(core.RGBAtoRGB(color.RGBA{255, 255, 100, 255})))
-		fmt.Printf("Intensity: %v\n", core.Intensity(core.RGBAtoRGB(c)))
-		fmt.Printf("Gabor: %v\n", core.Gabor(10, 10, 3.14))
+		log.Inf("rgb: %v\txyz: %v\tlab: %v", rgb, xyz, lab)
+		log.Inf("rgby: %v", core.RGBtoRGBY(core.RGBAtoRGB(color.RGBA{255, 255, 100, 255})))
+		log.Inf("Intensity: %v", core.Intensity(core.RGBAtoRGB(c)))
+		log.Inf("Gabor: %v", core.Gabor(10, 10, 3.14))
 	default:
 		flag.PrintDefaults()
 		os.Exit(2)
