@@ -10,7 +10,8 @@ import (
 
 	"github.com/hihebark/gore/core"
 	"github.com/hihebark/gore/log"
-	"github.com/hihebark/gore/models"
+	"github.com/hihebark/gore/models/hog"
+	"github.com/hihebark/gore/models/saliency"
 )
 
 const maxsizex int = 600
@@ -33,9 +34,9 @@ func main() {
 	switch {
 	case *path != "" && *models != "":
 		img, err := os.Open(*path)
-		defer img.Close()
 		if err != nil {
 			log.Err("image:os.Open path: %v", *path)
+			defer img.Close()
 		}
 		info, _ := img.Stat()
 		name := strings.Split(info.Name(), ".")[0]
@@ -48,10 +49,10 @@ func main() {
 		switch *models {
 		case "hog":
 			gray := i.Grayscale(imgdec)
-			imghog := model.HogVect(gray, i)
+			imghog := hog.HogVect(gray, i)
 			i.Save("hog", imghog)
 		case "sal":
-			imgs := model.Salience(imgdec, 3, 1)
+			imgs := saliency.Salience(imgdec, 3, 1)
 			for _, v := range imgs {
 				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Image)
 			}
@@ -61,7 +62,7 @@ func main() {
 		rgb := core.RGBAtoRGB(c)
 		xyz := core.RGBtoXYZ(rgb)
 		lab := core.XYZtoCieLAB(xyz)
-		log.Inf("rgb: %v\txyz: %v\tlab: %v", rgb, xyz, lab)
+		log.Inf("rgb: %v \txyz: %v \tlab: %v", rgb, xyz, lab)
 		log.Inf("rgby: %v", core.RGBtoRGBY(core.RGBAtoRGB(color.RGBA{255, 255, 100, 255})))
 		log.Inf("Intensity: %v", core.Intensity(core.RGBAtoRGB(c)))
 		log.Inf("Gabor: %v", core.Gabor(10, 10, 3.14))

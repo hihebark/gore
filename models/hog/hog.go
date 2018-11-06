@@ -1,4 +1,4 @@
-package model
+package hog
 
 import (
 	"fmt"

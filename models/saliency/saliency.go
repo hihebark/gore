@@ -1,4 +1,4 @@
-package model
+package saliency
 
 import (
 	"fmt"
