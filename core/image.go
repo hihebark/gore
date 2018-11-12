@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"math"
 	"os"
 	"sync"
 
@@ -180,6 +181,29 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 		}
 	}
 	return kernel
+}
+func GaborFilter(period, phase, angle float64, size int, imgsrc image.Image) {
+	var formula float64
+	major := period / 3.0
+	theta := angle + 90.0
+	if size == -1 {
+		size = int(math.Ceil(major * math.Sqrt(-2.0*math.Log(math.Exp(-5.0)))))
+	} else {
+		size = size / 2
+	}
+	psi := PI / 180.0 * phase
+	rtDeg := PI / 180.0 * theta
+	omega := (2.0 * PI) / period
+	co := math.Cos(rtDeg)
+	si := math.Sin(rtDeg)
+	majorsigq, minorsigq := 2.0*major*major, 2.0*major*major
+	for y := -size; y <= size; y++ {
+		for x := -size; x <= size; x++ {
+			maj, min := float64(x)*co+float64(y)*si, float64(x)*si-float64(y)*co
+			formula = math.Cos(omega*maj+psi) * math.Exp(-(maj*maj)/majorsigq) * math.Exp(-(min*min)/minorsigq)
+			fmt.Printf("%d\n", formula)
+		}
+	}
 }
 func RGBChannel(imgsrc image.Image, channel string) image.Image {
 	maxX, maxY := imgsrc.Bounds().Max.X, imgsrc.Bounds().Max.Y

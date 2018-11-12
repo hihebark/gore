@@ -9,6 +9,7 @@ const (
 	FULLCIRCLE float64 = 360
 	HALFCIRCLE float64 = 180
 	K          float64 = 8
+	PI         float64 = math.Pi
 )
 
 // Magnitude calculate the magnitude of two points

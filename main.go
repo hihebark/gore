@@ -56,6 +56,9 @@ func main() {
 			for _, v := range imgs {
 				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Image)
 			}
+		case "gabor":
+
+			core.GaborFilter(7.0, 0.0, 90.0, 9, imgdec)
 		}
 	case *path == "":
 		c := color.RGBA{255, 0, 0, 255}
