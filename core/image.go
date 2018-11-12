@@ -201,7 +201,7 @@ func GaborFilter(period, phase, angle float64, size int, imgsrc image.Image) {
 		for x := -size; x <= size; x++ {
 			maj, min := float64(x)*co+float64(y)*si, float64(x)*si-float64(y)*co
 			formula = math.Cos(omega*maj+psi) * math.Exp(-(maj*maj)/majorsigq) * math.Exp(-(min*min)/minorsigq)
-			fmt.Printf("%d\n", formula)
+			fmt.Printf("x:%d, y:%d = %f\n", x, y, formula)
 		}
 	}
 }
