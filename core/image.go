@@ -182,28 +182,40 @@ func gaussianMap(ks int, sigma float64) [][]float64 {
 	}
 	return kernel
 }
-func GaborFilter(period, phase, angle float64, size int, imgsrc image.Image) {
-	var formula float64
+func GaborFilter(imgsrc image.Image, bounds image.Rectangle) {
+	//	maxX := bounds.Max.X
+	//	maxY := bounds.Max.Y
+}
+func GaborFilterKernel(period, phase, angle float64, size int, imgsrc image.Image) [][]float64 {
 	major := period / 3.0
 	theta := angle + 90.0
 	if size == -1 {
 		size = int(math.Ceil(major * math.Sqrt(-2.0*math.Log(math.Exp(-5.0)))))
 	} else {
-		size = size / 2
+		size /= 2
 	}
+	l := size*2 + 1
+	kernels := make([][]float64, l)
 	psi := PI / 180.0 * phase
 	rtDeg := PI / 180.0 * theta
 	omega := (2.0 * PI) / period
 	co := math.Cos(rtDeg)
 	si := math.Sin(rtDeg)
-	majorsigq, minorsigq := 2.0*major*major, 2.0*major*major
+	j := 0
+	majorsigq := 2.0 * major * major
+	minorsigq := majorsigq
 	for y := -size; y <= size; y++ {
+		row := make([]float64, l)
+		i := 0
 		for x := -size; x <= size; x++ {
 			maj, min := float64(x)*co+float64(y)*si, float64(x)*si-float64(y)*co
-			formula = math.Cos(omega*maj+psi) * math.Exp(-(maj*maj)/majorsigq) * math.Exp(-(min*min)/minorsigq)
-			fmt.Printf("x:%d, y:%d = %f\n", x, y, formula)
+			row[i] = math.Cos(omega*maj+psi) * math.Exp(-(maj*maj)/majorsigq) * math.Exp(-(min*min)/minorsigq)
+			i++
 		}
+		kernels[j] = row
+		j++
 	}
+	return kernels
 }
 func RGBChannel(imgsrc image.Image, channel string) image.Image {
 	maxX, maxY := imgsrc.Bounds().Max.X, imgsrc.Bounds().Max.Y

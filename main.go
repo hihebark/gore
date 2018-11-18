@@ -43,7 +43,6 @@ func main() {
 		imgdec, format, err := image.Decode(img)
 		if err != nil {
 			log.Err("error while decoding image: %v", err)
-			panic("Decode")
 		}
 		i := core.NewImageInfo(format, name, imgdec.Bounds(), 2, 17)
 		switch *models {
@@ -57,8 +56,7 @@ func main() {
 				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Image)
 			}
 		case "gabor":
-
-			core.GaborFilter(7.0, 0.0, 90.0, 9, imgdec)
+			log.Inf("Gabor filter: %v", core.GaborFilterKernel(7.0, 0.0, 90.0, 9, imgdec))
 		}
 	case *path == "":
 		c := color.RGBA{255, 0, 0, 255}
