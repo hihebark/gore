@@ -11,6 +11,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/hihebark/gore/log"
 	"golang.org/x/image/draw"
 )
 
@@ -39,7 +40,7 @@ func NewImageInfo(f, n string, b image.Rectangle, s, c int) *ImageInfo {
 
 //Grayscale gray scale image
 func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
-	fmt.Printf("+ Grascaling image ...\n")
+	log.Inf("+ Grascaling image ...")
 	if imgsrc.ColorModel() == color.GrayModel {
 		return imgsrc
 	}
@@ -58,10 +59,10 @@ func (i *ImageInfo) Grayscale(imgsrc image.Image) image.Image {
 func (i *ImageInfo) Save(name string, imgsrc image.Image) {
 	out, err := os.Create(fmt.Sprintf("data/%s-%s.gore.%s", name, i.Name, i.Format))
 	if err != nil {
-		fmt.Printf("image.go:makeItGray:os.Create: image: %s %v\n", name, err)
+		log.Err("image.go:makeItGray:os.Create: image: %s %v", name, err)
 	}
 	defer out.Close()
-	fmt.Printf("+ Saving %s-%s.gore.%s\n", name, i.Name, i.Format)
+	log.Inf("Saving %s-%s.gore.%s", name, i.Name, i.Format)
 	switch i.Format {
 	case "png":
 		png.Encode(out, imgsrc)
@@ -72,7 +73,7 @@ func (i *ImageInfo) Save(name string, imgsrc image.Image) {
 
 //Scale reduce image into i.scalsize defind in ImageInfo.
 func (i *ImageInfo) Scale(imgsrc image.Image) image.Image {
-	fmt.Printf("+ Scale image into %d\n", i.Scalsize)
+	log.Inf("+ Scale image into %d", i.Scalsize)
 	bound := imgsrc.Bounds()
 	rect := image.Rect(0, 0, int(bound.Max.X/i.Scalsize), int(bound.Max.Y/i.Scalsize))
 	dstimg := image.NewRGBA(rect)
@@ -83,8 +84,8 @@ func (i *ImageInfo) Scale(imgsrc image.Image) image.Image {
 func decode(i io.Reader) (image.Image, string) {
 	img, f, err := image.Decode(i)
 	if err != nil {
-		fmt.Printf("error while decoding image: %v\n", err)
-		panic("Decode")
+		log.Err("error while decoding image: %v", err)
+		panic("Decoding")
 	}
 	return img, f
 }
@@ -136,7 +137,7 @@ func GaussianBlur(imgsrc image.Image, kernel, radius int) image.Image {
 	imgdst := image.NewRGBA64(bounds)
 	l := maxY * maxX
 	kernels := gaussianMap(kernel, float64(radius))
-	fmt.Printf("+ There is %d cells\n", l)
+	log.Inf("+ There is %d cells", l)
 	for y := 0; y < maxY; y++ {
 		for x := 0; x < maxX; x++ {
 			var r, g, b, a uint16

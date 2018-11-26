@@ -1,30 +1,30 @@
 package saliency
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 
 	"github.com/hihebark/gore/core"
+	"github.com/hihebark/gore/log"
 )
 
 //Salience output salience image.
-func Salience(imgsrc image.Image, kernel, radius int) []core.Img {
-	fmt.Printf("+ Calculating Salience map: \n")
+func Salience(imgsrc image.Image, kernel, radius int, i *core.ImageInfo) []core.Img {
+	log.Inf("Calculating Salience map:")
+	//_ := i.Grayscale(imgsrc)
 	return []core.Img{core.Img{intensityFeatures(imgsrc), "intensity"}}
 	//return core.RGBChannel(imgsrc, "blue")
 	//return core.GaussianBlur(imgsrc, kernel, radius)
 }
 
 func intensityFeatures(imgsrc image.Image) image.Image {
-	fmt.Printf("- Extracting intensity features from image\n")
+	log.Inf("Extracting intensity features from image")
 	maxX, maxY := imgsrc.Bounds().Max.X, imgsrc.Bounds().Max.Y
-	imgdst := image.NewRGBA(imgsrc.Bounds())
+	imgdst := image.NewGray(imgsrc.Bounds())
 	for y := 0; y <= maxY; y++ {
 		for x := 0; x <= maxX; x++ {
-			r, g, b, a := imgsrc.At(x, y).RGBA()
-			ri, gi, bi := core.Intensityrgb(core.RGBAtoRGB(color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}))
-			imgdst.Set(x, y, color.RGBA{ri, gi, bi, uint8(a)})
+			r, g, b, _ := imgsrc.At(x, y).RGBA()
+			imgdst.SetGray(x, y, color.Gray{uint8((r + g + b) / 3)})
 		}
 	}
 	return imgdst
@@ -32,8 +32,8 @@ func intensityFeatures(imgsrc image.Image) image.Image {
 	//fmt.Printf("- Intensity of White color %v\n", core.Intensity(core.RGBAtoRGB(color.RGBA{0, 0, 0, 255})))
 }
 func colourFeature() {
-	fmt.Printf("- Extracting colour feature form image\n")
+	log.Inf("Extracting colour feature form image")
 }
 func orientationFeatures() {
-	fmt.Printf("- Extracting orientation features from image\n")
+	log.Inf("Extracting orientation features from image")
 }

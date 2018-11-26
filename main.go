@@ -51,7 +51,7 @@ func main() {
 			imghog := hog.HogVect(gray, i)
 			i.Save("hog", imghog)
 		case "sal":
-			imgs := saliency.Salience(imgdec, 3, 1)
+			imgs := saliency.Salience(imgdec, 3, 1, i)
 			for _, v := range imgs {
 				i.Save(fmt.Sprintf("sal-%s", v.Name), v.Image)
 			}
