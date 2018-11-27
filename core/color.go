@@ -10,17 +10,14 @@ type (
 	RGB struct {
 		R, G, B float64
 	}
-
 	// RGBY Red, Green, Blue and Yellow color
 	RGBY struct {
 		R, G, B, Y float64
 	}
-
 	// XYZ is an additive color space based on how the eye intereprets stimulus from light.
 	XYZ struct {
 		X, Y, Z float64
 	}
-
 	// LAB is CieLab color
 	LAB struct {
 		L, A, B float64
