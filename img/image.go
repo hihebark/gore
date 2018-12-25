@@ -2,6 +2,7 @@ package img
 
 import (
 	"image"
+	"image/color"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,7 +11,7 @@ import (
 	"github.com/hihebark/gore/log"
 )
 
-//ImageInfo image information.
+//Image image information.
 type Image struct {
 	sync.RWMutex
 	Interface
@@ -20,6 +21,8 @@ type Image struct {
 	Img    image.Image
 	Bounds image.Rectangle
 }
+
+// Interface
 type Interface interface {
 	Save(f string) error
 	Scale() image.Image
@@ -37,6 +40,8 @@ func NewImage(name string, bounds image.Rectangle) *Image {
 		Bounds: bounds,
 	}
 }
+
+// Grayscale make an image gray.
 func (i *Image) Grayscale() image.Image {
 	log.Inf("Grascaling %s.%s ...", i.Img, i.Ext)
 	if i.img.ColorModel() == color.GrayModel {
@@ -52,6 +57,7 @@ func (i *Image) Grayscale() image.Image {
 	return gray
 }
 
+// Save save image to output file.
 func (i *Image) Save(folder string) error {
 	outputName := fmt.Sprintf("%s/%s.gore.%s", folder, i.Name, i.Ext)
 	out, err := os.Create(outputName)
@@ -69,6 +75,8 @@ func (i *Image) Save(folder string) error {
 	log.Inf("Saving %s", outputName)
 	return nil
 }
+
+// Scale re-scale image t given size.
 func (i *Image) Scale(size int) image.Image {
 	log.Inf("+ Scale image into %d", size)
 	bounds := i.Bounds
@@ -78,7 +86,17 @@ func (i *Image) Scale(size int) image.Image {
 	return dstimg
 }
 
-//TODO
-func (i *Image) Read() ([]string, error) {
-	return []string{}, nil
+// Read pixel by pixel and return RGBA array.
+func (i *Image) Read() color.RGBA {
+	maxX, maxY := i.Bounds.Max.X, i.Bounds.Max.Y
+	log.Inf("Reading %s with %d*%d ...", i.Name, maxX, maxY)
+	pix := make([][]color.RGBA, maxX*maxY)
+	for y := 0; y <= maxY; y++ {
+		row := make([]color.RGBA, maxY)
+		for x := 0; x <= maxX; x++ {
+			row[i] = i.Img.At(x, y).RGBA()
+		}
+		pix[y] = row
+	}
+	return pix
 }
